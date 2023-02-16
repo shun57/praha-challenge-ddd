@@ -13,4 +13,8 @@ export class ParticipantEmail extends ValueObject<ParticipantEmailProps> {
     private constructor(props: ParticipantEmailProps) {
         super(props);
     }
+
+    public static create(props: ParticipantEmailProps): ParticipantEmail {
+        return new ParticipantEmail(props);
+    }
 }

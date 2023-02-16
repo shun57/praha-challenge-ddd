@@ -13,4 +13,8 @@ export class ParticipantName extends ValueObject<ParticipantNameProps> {
     private constructor(props: ParticipantNameProps) {
         super(props);
     }
+
+    public static create(props: ParticipantNameProps): ParticipantName {
+        return new ParticipantName(props);
+    }
 }
