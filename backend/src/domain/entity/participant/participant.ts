@@ -1,8 +1,8 @@
-import { Entity } from 'src/shared/domain/Entity'
-import { ParticipantName } from 'src/domain/value-object/participant/participantName'
-import { ParticipantEmail } from 'src/domain/value-object/participant/participantEmail'
-import { ParticipantEnrollmentStatus } from 'src/domain/value-object/participant/participantEnrollmentStatus'
-import { UniqueEntityID } from 'src/shared/domain/uniqueEntityID'
+import { Entity } from 'src/shared/domain/entity'
+import { ParticipantName } from 'src/domain/value-object/participant/participant-name'
+import { ParticipantEmail } from 'src/domain/value-object/participant/participant-email'
+import { ParticipantEnrollmentStatus } from 'src/domain/value-object/participant/participant-enrollment-status'
+import { UniqueEntityID } from 'src/shared/domain/unique-entity-id'
 
 interface ParticipantProps {
   name: ParticipantName

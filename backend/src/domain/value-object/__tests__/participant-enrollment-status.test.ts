@@ -2,7 +2,7 @@ import {
     ParticipantEnrollmentStatusProps,
     ParticipantEnrollmentStatus,
     EnrollmentStatusType,
-} from "src/domain/value-object/participant/participantEnrollmentStatus";
+} from "src/domain/value-object/participant/participant-enrollment-status";
 
 describe('在籍ステータス', (): void => {
     test('在籍ステータスの値オブジェクトを生成できる', () => {

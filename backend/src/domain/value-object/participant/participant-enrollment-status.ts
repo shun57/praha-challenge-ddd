@@ -1,4 +1,4 @@
-import { ValueObject } from 'src/shared/domain/ValueObject'
+import { ValueObject } from 'src/shared/domain/value-object'
 
 export interface ParticipantEnrollmentStatusProps {
     value: string;
