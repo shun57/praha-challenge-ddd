@@ -4,12 +4,12 @@ datasource db {
 }
 
 generator client {
-  previewFeatures = ["nativeTypes"]
   provider        = "prisma-client-js"
 }
 
-model SomeData {
-  id        String    @id
-  required Boolean
-  number   Int     @db.SmallInt
+model Participant {
+  id                String   @id
+  name              String
+  email             String   @unique
+  enrollmentStatus  String
 }
