@@ -26,6 +26,14 @@ services:
       POSTGRES_DB: prisma
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
       TZ: "Asia/Tokyo"
+  adminer:
+    container_name: postgres-adminer
+    image: adminer:4.7-standalone
+    environment:
+      ADMINER_DEFAULT_SERVER: prisma-db
+      ADMINER_DESIGN: ng9
+    ports:
+      - "8080:8080"
 
 volumes:
   prisma-store:
