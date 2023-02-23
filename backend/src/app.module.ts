@@ -4,16 +4,24 @@ import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-paticipan
 import { GetAllParticipants } from 'src/infra/db/query-service/participant/get-all-participants'
 import { PrismaService } from 'src/infra/db/prisma.service'
 import { ConstantTokens } from 'src/shared/constants'
+import { TeamController } from 'src/controller/team/team.controller'
+import { GetAllTeamsUseCase } from 'src/app/team/get-all-teams-usecase'
+import { GetAllTeams } from 'src/infra/db/query-service/team/get-all-teams'
 
 @Module({
   imports: [],
-  controllers: [ParticipantController],
+  controllers: [ParticipantController, TeamController],
   providers: [
-    GetAllParticipantsUseCase,
     PrismaService,
+    GetAllParticipantsUseCase,
     {
       provide: ConstantTokens.REPOSITORY,
       useClass: GetAllParticipants
+    },
+    GetAllTeamsUseCase,
+    {
+      provide: ConstantTokens.REPOSITORY,
+      useClass: GetAllTeams
     }
   ],
 })
