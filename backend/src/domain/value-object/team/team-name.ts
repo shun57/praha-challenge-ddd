@@ -25,7 +25,7 @@ export class TeamName extends ValueObject<TeamNameProps> {
       throw new BadRequestException("チーム名は必須です");
     }
     if (!this.isNumber(props.value)) {
-      throw new BadRequestException("チーム名は英字にしてください");
+      throw new BadRequestException("チーム名は数字にしてください");
     }
     if (props.value.length > 3) {
       throw new BadRequestException("チーム名は3文字以下にしてください");
