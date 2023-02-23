@@ -13,3 +13,13 @@ model Participant {
   email             String   @unique
   enrollmentStatus  String
 }
+
+model Team {
+  id                String   @id
+  name              String
+}
+
+model Pair {
+  id                String   @id
+  name              String
+}
