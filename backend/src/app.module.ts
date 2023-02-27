@@ -7,10 +7,13 @@ import { ConstantTokens } from 'src/shared/constants'
 import { TeamController } from 'src/controller/team/team.controller'
 import { GetAllTeamsUseCase } from 'src/app/team/get-all-teams-usecase'
 import { GetAllTeams } from 'src/infra/db/query-service/team/get-all-teams'
+import { PairController } from 'src/controller/pair/pair.controller'
+import { GetAllPairs } from 'src/infra/db/query-service/pair/get-all-pairs'
+import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase'
 
 @Module({
   imports: [],
-  controllers: [ParticipantController, TeamController],
+  controllers: [ParticipantController, TeamController, PairController],
   providers: [
     PrismaService,
     GetAllParticipantsUseCase,
@@ -22,6 +25,11 @@ import { GetAllTeams } from 'src/infra/db/query-service/team/get-all-teams'
     {
       provide: ConstantTokens.REPOSITORY,
       useClass: GetAllTeams
+    },
+    GetAllPairsUseCase,
+    {
+      provide: ConstantTokens.REPOSITORY,
+      useClass: GetAllPairs
     }
   ],
 })
