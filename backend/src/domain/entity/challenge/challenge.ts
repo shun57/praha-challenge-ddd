@@ -1,3 +1,4 @@
+import { ChallengeId } from 'src/domain/value-object/challenge/challenge-id';
 import { Entity } from 'src/shared/domain/entity'
 import { UniqueEntityID } from 'src/shared/domain/unique-entity-id'
 
@@ -7,6 +8,10 @@ interface ChallengeProps {
 }
 
 export class Challenge extends Entity<ChallengeProps> {
+
+  get challengeId(): ChallengeId {
+    return ChallengeId.create(this._id);
+  }
 
   get title(): string {
     return this.props.title
