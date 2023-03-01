@@ -3,6 +3,7 @@ import { ParticipantName } from 'src/domain/value-object/participant/participant
 import { ParticipantEmail } from 'src/domain/value-object/participant/participant-email'
 import { ParticipantEnrollmentStatus } from 'src/domain/value-object/participant/participant-enrollment-status'
 import { UniqueEntityID } from 'src/shared/domain/unique-entity-id'
+import { ParticipantId } from 'src/domain/value-object/participant/participant-id'
 
 interface ParticipantProps {
   name: ParticipantName
@@ -11,6 +12,10 @@ interface ParticipantProps {
 }
 
 export class Participant extends Entity<ParticipantProps> {
+
+  get participantId(): ParticipantId {
+    return ParticipantId.create(this._id);
+  }
 
   get name(): ParticipantName {
     return this.props.name
