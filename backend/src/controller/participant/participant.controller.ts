@@ -9,7 +9,7 @@ export class ParticipantController {
   @Get()
   @ApiResponse({ status: 200, type: GetAllParticipantsResponse })
   async getAll(): Promise<GetAllParticipantsResponse> {
-    const participants = await this.getAllParticipantsUseCase.handle()
+    const participants = await this.getAllParticipantsUseCase.do()
     return new GetAllParticipantsResponse({ participants: participants })
   }
 }

@@ -8,7 +8,7 @@ export class GetAllParticipantsUseCase {
         private readonly participantRepository: ParticipantRepository
     ) { }
 
-    public async handle() {
+    public async do() {
         try {
             return await this.participantRepository.getAll()
         } catch (error) {

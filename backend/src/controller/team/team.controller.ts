@@ -9,7 +9,7 @@ export class TeamController {
   @Get()
   @ApiResponse({ status: 200, type: GetAllTeamsResponse })
   async getAll(): Promise<GetAllTeamsResponse> {
-    const teams = await this.getAllTeamsUseCase.handle()
+    const teams = await this.getAllTeamsUseCase.do()
     return new GetAllTeamsResponse({ teams: teams })
   }
 }

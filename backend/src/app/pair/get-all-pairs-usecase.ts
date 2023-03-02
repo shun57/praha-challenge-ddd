@@ -8,7 +8,7 @@ export class GetAllPairsUseCase {
         private readonly pairRepository: PairRepository
     ) { }
 
-    public async handle() {
+    public async do() {
         try {
             return await this.pairRepository.getAll()
         } catch (error) {

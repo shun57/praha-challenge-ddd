@@ -9,7 +9,7 @@ export class PairController {
   @Get()
   @ApiResponse({ status: 200, type: GetAllPairsResponse })
   async getAll(): Promise<GetAllPairsResponse> {
-    const pairs = await this.getAllPairsUseCase.handle()
+    const pairs = await this.getAllPairsUseCase.do()
     return new GetAllPairsResponse({ pairs: pairs })
   }
 }

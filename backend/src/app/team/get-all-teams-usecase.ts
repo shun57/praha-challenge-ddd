@@ -8,7 +8,7 @@ export class GetAllTeamsUseCase {
         private readonly teamRepository: TeamRepository
     ) { }
 
-    public async handle() {
+    public async do() {
         try {
             return await this.teamRepository.getAll()
         } catch (error) {
