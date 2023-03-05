@@ -1,5 +1,5 @@
 import { ParticipantDTO } from "src/app/participant/dto/participant"
 
-export interface ParticipantRepository {
+export interface ParticipantQS {
   getAll(): Promise<ParticipantDTO[]>
 }

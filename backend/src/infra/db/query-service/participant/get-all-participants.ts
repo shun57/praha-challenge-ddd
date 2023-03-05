@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ParticipantDTO } from 'src/app/participant/dto/participant'
-import { ParticipantRepository } from 'src/app/participant/query-service-interface/participant-repository'
+import { ParticipantQS } from 'src/app/participant/query-service-interface/participant-qs'
 import { PrismaService } from 'src/infra/db/prisma.service'
 
 @Injectable()
-export class GetAllParticipants implements ParticipantRepository {
+export class GetAllParticipants implements ParticipantQS {
   public constructor(private readonly prisma: PrismaService) { }
 
   public async getAll(): Promise<ParticipantDTO[]> {

@@ -1,16 +1,16 @@
 import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
-import { ParticipantRepository } from "src/app/participant/query-service-interface/participant-repository"
+import { ParticipantQS } from "src/app/participant/query-service-interface/participant-qs"
 
 export class GetAllParticipantsUseCase {
     public constructor(
         @Inject(ConstantTokens.REPOSITORY)
-        private readonly participantRepository: ParticipantRepository
+        private readonly participantQS: ParticipantQS
     ) { }
 
     public async do() {
         try {
-            return await this.participantRepository.getAll()
+            return await this.participantQS.getAll()
         } catch (error) {
             throw error
         }
