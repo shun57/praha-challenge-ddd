@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common'
 import { ParticipantController } from 'src/controller/participant/participant.controller'
 import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-paticipants-usecase'
-import { GetAllParticipants } from 'src/infra/db/query-service/participant/get-all-participants'
+import { ParticipantQS } from 'src/infra/db/query-service/participant/participant-qs'
 import { PrismaService } from 'src/infra/db/prisma.service'
 import { ConstantTokens } from 'src/shared/constants'
 import { TeamController } from 'src/controller/team/team.controller'
 import { GetAllTeamsUseCase } from 'src/app/team/get-all-teams-usecase'
-import { GetAllTeams } from 'src/infra/db/query-service/team/get-all-teams'
+import { TeamQS } from 'src/infra/db/query-service/team/teams-qs'
 import { PairController } from 'src/controller/pair/pair.controller'
-import { GetAllPairs } from 'src/infra/db/query-service/pair/get-all-pairs'
+import { PairQS } from 'src/infra/db/query-service/pair/pair-qs'
 import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase'
 
 @Module({
@@ -19,17 +19,17 @@ import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase'
     GetAllParticipantsUseCase,
     {
       provide: ConstantTokens.REPOSITORY,
-      useClass: GetAllParticipants
+      useClass: ParticipantQS
     },
     GetAllTeamsUseCase,
     {
       provide: ConstantTokens.REPOSITORY,
-      useClass: GetAllTeams
+      useClass: TeamQS
     },
     GetAllPairsUseCase,
     {
       provide: ConstantTokens.REPOSITORY,
-      useClass: GetAllPairs
+      useClass: PairQS
     }
   ],
 })
