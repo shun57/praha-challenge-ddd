@@ -8,18 +8,35 @@ generator client {
 }
 
 model Participant {
-  id                String   @id
-  name              String
-  email             String   @unique
-  enrollmentStatus  String
+  id                     String                  @id
+  name                   String                  @db.VarChar(255)
+  email                  String                  @unique
+  enrollmentStatus       String                  @db.VarChar(255)
+  participantChallenges  ParticipantChallenge[]
+}
+
+model Challenge {
+  id                     String                  @id
+  title                  String                  @db.VarChar(255)
+  description            String?
+  participantChallenges  ParticipantChallenge[]
+}
+
+model ParticipantChallenge {
+  participantId String       @unique
+  challengeId   String       @unique
+  progress      String       @db.VarChar(255)
+  participant   Participant  @relation(fields: [participantId], references: [id])
+  challenge     Challenge    @relation(fields: [challengeId], references: [id])
+  @@id([participantId, challengeId])
 }
 
 model Team {
   id                String   @id
-  name              String
+  name              String   @db.VarChar(255)
 }
 
 model Pair {
   id                String   @id
-  name              String
+  name              String   @db.VarChar(255)
 }
