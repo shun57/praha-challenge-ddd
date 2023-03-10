@@ -1,5 +1,4 @@
 import { Entity } from 'src/shared/domain/entity'
-import { UniqueEntityID } from 'src/shared/domain/unique-entity-id'
 import { ParticipantId } from 'src/domain/value-object/participant/participant-id'
 import { ChallengeId } from 'src/domain/value-object/challenge/challenge-id'
 import { ParticipantChallengeProgress, ProgressType } from 'src/domain/value-object/participant/participant-challenge-progress'
@@ -11,11 +10,6 @@ interface ParticipantChallengeProps {
 }
 
 export class ParticipantChallenge extends Entity<ParticipantChallengeProps> {
-
-  get id(): UniqueEntityID {
-    return this._id;
-  }
-
   get participantId(): ParticipantId {
     return this.props.participantId;
   }
@@ -28,16 +22,19 @@ export class ParticipantChallenge extends Entity<ParticipantChallengeProps> {
     return this.props.progress;
   }
 
-  public isCompletion(): boolean {
-    return this.props.progress.value === ProgressType.completion;
+  public updateProgress(progress: ParticipantChallengeProgress): void {
+    if (this.progress.value === ProgressType.completion) {
+      throw new Error("進捗ステータスが完了の場合更新できません。")
+    }
+    this.props.progress = progress
   }
 
-  private constructor(props: ParticipantChallengeProps, id?: UniqueEntityID) {
-    super(props, id)
+  private constructor(props: ParticipantChallengeProps) {
+    super(props)
   }
 
-  public static create(props: ParticipantChallengeProps, id?: UniqueEntityID): ParticipantChallenge {
-    const participant = new ParticipantChallenge({ ...props }, id)
-    return participant
+  public static create(props: ParticipantChallengeProps): ParticipantChallenge {
+    const participantChallenge = new ParticipantChallenge({ ...props })
+    return participantChallenge
   }
 }
