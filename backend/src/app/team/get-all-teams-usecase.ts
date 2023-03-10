@@ -4,7 +4,7 @@ import { ITeamQS } from "src/app/team/query-service-interface/team-qs"
 
 export class GetAllTeamsUseCase {
     public constructor(
-        @Inject(ConstantTokens.REPOSITORY)
+        @Inject(ConstantTokens.REPOSITORY_QS)
         private readonly teamQS: ITeamQS
     ) { }
 

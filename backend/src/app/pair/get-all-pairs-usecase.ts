@@ -4,7 +4,7 @@ import { IPairQS } from "src/app/pair/query-service-interface/pair-qs"
 
 export class GetAllPairsUseCase {
     public constructor(
-        @Inject(ConstantTokens.REPOSITORY)
+        @Inject(ConstantTokens.REPOSITORY_QS)
         private readonly pairQS: IPairQS
     ) { }
 

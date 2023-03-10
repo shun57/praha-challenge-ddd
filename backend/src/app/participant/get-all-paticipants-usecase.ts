@@ -4,7 +4,7 @@ import { IParticipantQS } from "src/app/participant/query-service-interface/part
 
 export class GetAllParticipantsUseCase {
     public constructor(
-        @Inject(ConstantTokens.REPOSITORY)
+        @Inject(ConstantTokens.REPOSITORY_QS)
         private readonly participantQS: IParticipantQS
     ) { }
 
