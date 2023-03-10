@@ -10,6 +10,9 @@ import { TeamQS } from 'src/infra/db/query-service/team/teams-qs'
 import { PairController } from 'src/controller/pair/pair.controller'
 import { PairQS } from 'src/infra/db/query-service/pair/pair-qs'
 import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase'
+import { UpdateParticipantChallengeProgressUseCase } from 'src/app/participant/update-participant-challenge-progress-usecase'
+import { ParticipantChallengeRepository } from 'src/infra/db/repository/participant-challenge-repository'
+import { ParticipantChallengeQS } from 'src/infra/db/query-service/participant/participant-challenge-qs'
 
 @Module({
   imports: [],
@@ -18,17 +21,26 @@ import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase'
     PrismaService,
     GetAllParticipantsUseCase,
     {
-      provide: ConstantTokens.REPOSITORY,
+      provide: ConstantTokens.REPOSITORY_QS,
       useClass: ParticipantQS
+    },
+    UpdateParticipantChallengeProgressUseCase,
+    {
+      provide: ConstantTokens.REPOSITORY_QS_PC,
+      useClass: ParticipantChallengeQS,
+    },
+    {
+      provide: ConstantTokens.REPOSITORY,
+      useClass: ParticipantChallengeRepository
     },
     GetAllTeamsUseCase,
     {
-      provide: ConstantTokens.REPOSITORY,
+      provide: ConstantTokens.REPOSITORY_QS,
       useClass: TeamQS
     },
     GetAllPairsUseCase,
     {
-      provide: ConstantTokens.REPOSITORY,
+      provide: ConstantTokens.REPOSITORY_QS,
       useClass: PairQS
     }
   ],

@@ -1,5 +1,5 @@
 import { ParticipantChallenge } from "src/domain/entity/participant/participant-challenge";
 
-export interface ParticipantChallengeRepository {
-  save(challenge: ParticipantChallenge): Promise<ParticipantChallenge>
+export interface IParticipantChallengeRepository {
+  save(challenge: ParticipantChallenge): Promise<void>
 }
