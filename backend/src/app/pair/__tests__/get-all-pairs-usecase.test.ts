@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GetAllPairsUseCase } from "src/app/pair/get-all-pairs-usecase";
+import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase';
 import { ConstantTokens } from 'src/shared/constants';
 import { IPairQS } from 'src/app/pair/query-service-interface/pair-qs';
 
