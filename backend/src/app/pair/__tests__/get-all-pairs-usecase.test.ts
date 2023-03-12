@@ -33,7 +33,7 @@ describe('do', () => {
     expect(pairs).toEqual(expectedPairs);
   });
 
-  it('[異常系]: pairQS.getAllで例外が発生した場合、例外が発生する', async () => {
+  it('[異常系]:pairQS.getAllで例外が発生した場合、例外が発生する', async () => {
     const errorMessage = 'Error occurred while getting pairs';
     jest.spyOn(pairQS, 'getAll').mockRejectedValueOnce(new Error(errorMessage));
 
