@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ParticipantController } from 'src/controller/participant/participant.controller'
-import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-paticipants-usecase'
+import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-participants-usecase'
 import { ParticipantQS } from 'src/infra/db/query-service/participant/participant-qs'
 import { PrismaService } from 'src/infra/db/prisma.service'
 import { ConstantTokens } from 'src/shared/constants'

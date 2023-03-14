@@ -1,6 +1,6 @@
 import { HttpCode, Body, Param, Controller, Get, Patch } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-paticipants-usecase'
+import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-participants-usecase'
 import { UpdateParticipantChallengeProgressUseCase } from 'src/app/participant/update-participant-challenge-progress-usecase'
 import { GetAllParticipantsResponse } from 'src/controller/participant/response/get-all-participants-response.dto'
 import { PatchParticipantChallengeRequest } from './request/patch-participant-challenge-request'
