@@ -13,6 +13,8 @@ import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase'
 import { UpdateParticipantChallengeProgressUseCase } from 'src/app/participant/update-participant-challenge-progress-usecase'
 import { ParticipantChallengeRepository } from 'src/infra/db/repository/participant-challenge-repository'
 import { ParticipantChallengeQS } from 'src/infra/db/query-service/participant/participant-challenge-qs'
+import { CreateParticipantUseCase } from 'src/app/participant/create-participant-usecase'
+import { ParticipantRepository } from 'src/infra/db/repository/participant-repository'
 
 @Module({
   imports: [],
@@ -42,6 +44,15 @@ import { ParticipantChallengeQS } from 'src/infra/db/query-service/participant/p
     {
       provide: ConstantTokens.REPOSITORY_QS,
       useClass: PairQS
+    },
+    CreateParticipantUseCase,
+    {
+      provide: ConstantTokens.REPOSITORY_QS_PC,
+      useClass: ParticipantQS
+    },
+    {
+      provide: ConstantTokens.REPOSITORY,
+      useClass: ParticipantRepository
     }
   ],
 })
