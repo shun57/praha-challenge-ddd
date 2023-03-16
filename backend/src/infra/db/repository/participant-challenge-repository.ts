@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ParticipantChallenge } from "src/domain/entity/participant/participant-challenge";
-import { IParticipantChallengeRepository } from 'src/app/participant/repository-interface/participant-challenge-repository';
+import { IParticipantChallengeRepository } from 'src/domain/interface/participant/repository-interface/participant-challenge-repository';
 import { PrismaService } from 'src/infra/db/prisma.service'
 
 @Injectable()

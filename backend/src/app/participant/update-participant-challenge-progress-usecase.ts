@@ -1,7 +1,7 @@
 import { Inject } from "@nestjs/common"
 import { ParticipantChallenge } from 'src/domain/entity/participant/participant-challenge';
-import { IParticipantChallengeQS } from "src/app/participant/query-service-interface/participant-challenge-qs";
-import { IParticipantChallengeRepository } from 'src/app/participant/repository-interface/participant-challenge-repository';
+import { IParticipantChallengeQS } from "src/domain/interface/participant/query-service-interface/participant-challenge-qs";
+import { IParticipantChallengeRepository } from "src/domain/interface/participant/repository-interface/participant-challenge-repository";
 import { ConstantTokens } from "src/shared/constants"
 import { ParticipantId } from "src/domain/value-object/participant/participant-id";
 import { ChallengeId } from "src/domain/value-object/challenge/challenge-id";

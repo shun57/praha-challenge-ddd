@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IParticipantChallengeQS } from 'src/app/participant/query-service-interface/participant-challenge-qs'
+import { IParticipantChallengeQS } from 'src/domain/interface/participant/query-service-interface/participant-challenge-qs'
 import { PrismaService } from 'src/infra/db/prisma.service'
 import { ParticipantId } from 'src/domain/value-object/participant/participant-id';
 import { ChallengeId } from 'src/domain/value-object/challenge/challenge-id';

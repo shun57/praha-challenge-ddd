@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UpdateParticipantChallengeProgressUseCase } from 'src/app/participant/update-participant-challenge-progress-usecase';
 import { ConstantTokens } from 'src/shared/constants';
-import { IParticipantChallengeQS } from 'src/app/participant/query-service-interface/participant-challenge-qs';
-import { IParticipantChallengeRepository } from 'src/app/participant/repository-interface/participant-challenge-repository';
+import { IParticipantChallengeQS } from 'src/domain/interface/participant/query-service-interface/participant-challenge-qs';
+import { IParticipantChallengeRepository } from 'src/domain/interface/participant/repository-interface/participant-challenge-repository';
 import { ParticipantChallengeDTO } from 'src/app/participant/dto/participant-challenge';
 
 describe('do', () => {

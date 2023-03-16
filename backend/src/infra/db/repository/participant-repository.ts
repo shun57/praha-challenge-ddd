@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infra/db/prisma.service'
-import { IParticipantRepository } from 'src/app/participant/repository-interface/participant-repository';
+import { IParticipantRepository } from 'src/domain/interface/participant/repository-interface/participant-repository';
 import { Participant } from 'src/domain/entity/participant/participant';
 
 @Injectable()

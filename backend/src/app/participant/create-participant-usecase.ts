@@ -1,7 +1,7 @@
 import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
-import { IParticipantRepository } from "src/app/participant/repository-interface/participant-repository";
-import { IParticipantQS } from "src/app/participant/query-service-interface/participant-qs"
+import { IParticipantRepository } from "src/domain/interface/participant/repository-interface/participant-repository";
+import { IParticipantQS } from "src/domain/interface/participant/query-service-interface/participant-qs"
 import { Participant } from "src/domain/entity/participant/participant";
 import { ParticipantName } from "src/domain/value-object/participant/participant-name";
 import { ParticipantEmail } from "src/domain/value-object/participant/participant-email";

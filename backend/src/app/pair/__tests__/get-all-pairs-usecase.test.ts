@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase';
 import { ConstantTokens } from 'src/shared/constants';
-import { IPairQS } from 'src/app/pair/query-service-interface/pair-qs';
+import { IPairQS } from 'src/domain/interface/pair/query-service-interface/pair-qs';
 
 describe('do', () => {
   let useCase: GetAllPairsUseCase;
