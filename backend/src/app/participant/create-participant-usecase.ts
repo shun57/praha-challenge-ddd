@@ -5,7 +5,6 @@ import { IParticipantQS } from "src/domain/interface/participant/query-service-i
 import { Participant } from "src/domain/entity/participant/participant";
 import { ParticipantName } from "src/domain/value-object/participant/participant-name";
 import { ParticipantEmail } from "src/domain/value-object/participant/participant-email";
-import { ParticipantEnrollmentStatus, EnrollmentStatusType } from "src/domain/value-object/participant/participant-enrollment-status";
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
 
 export class CreateParticipantUseCase {
@@ -25,7 +24,6 @@ export class CreateParticipantUseCase {
       const participant = Participant.create({
         name: ParticipantName.create({ value: name }),
         email: ParticipantEmail.create({ value: email }),
-        enrollmentStatus: ParticipantEnrollmentStatus.create({ value: EnrollmentStatusType.enrolled })
       }, new UniqueEntityID())
       await this.participantRepo.save(participant)
     } catch (error) {

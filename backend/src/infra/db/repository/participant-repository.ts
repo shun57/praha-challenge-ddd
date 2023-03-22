@@ -13,7 +13,6 @@ export class ParticipantRepository implements IParticipantRepository {
         id: participant.participantId.id.toString(),
         name: participant.name.value,
         email: participant.email.value,
-        enrollmentStatus: participant.enrollmentStatus.value,
       },
     })
   }

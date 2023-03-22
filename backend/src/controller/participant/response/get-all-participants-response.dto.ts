@@ -5,12 +5,11 @@ export class GetAllParticipantsResponse {
 
   public constructor(params: { participants: ParticipantDTO[] }) {
     const { participants } = params
-    this.participants = participants.map(({ id, name, email, enrollmentStatus }) => {
+    this.participants = participants.map(({ id, name, email }) => {
       return new Participant({
         id,
         name,
         email,
-        enrollmentStatus,
       })
     })
   }
@@ -20,17 +19,14 @@ class Participant {
   id: string
   name: string
   email: string
-  enrollmentStatus: string
 
   public constructor(params: {
     id: string
     name: string
     email: string
-    enrollmentStatus: string
   }) {
     this.id = params.id
     this.name = params.name
     this.email = params.email
-    this.enrollmentStatus = params.enrollmentStatus
   }
 }
