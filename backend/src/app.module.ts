@@ -15,10 +15,13 @@ import { ParticipantChallengeRepository } from 'src/infra/db/repository/particip
 import { ParticipantChallengeQS } from 'src/infra/db/query-service/participant/participant-challenge-qs'
 import { CreateParticipantUseCase } from 'src/app/participant/create-participant-usecase'
 import { ParticipantRepository } from 'src/infra/db/repository/participant-repository'
+import { ChangePairParticipantUseCase } from 'src/app/membership/change-pair-participant-usecase'
+import { MembershipRepository } from 'src/infra/db/repository/membership-repository'
+import { MembershipController } from 'src/controller/membership/membership.controller'
 
 @Module({
   imports: [],
-  controllers: [ParticipantController, TeamController, PairController],
+  controllers: [ParticipantController, TeamController, PairController, MembershipController],
   providers: [
     PrismaService,
     GetAllParticipantsUseCase,
@@ -53,6 +56,11 @@ import { ParticipantRepository } from 'src/infra/db/repository/participant-repos
     {
       provide: ConstantTokens.REPOSITORY,
       useClass: ParticipantRepository
+    },
+    ChangePairParticipantUseCase,
+    {
+      provide: ConstantTokens.REPOSITORY,
+      useClass: MembershipRepository
     }
   ],
 })
