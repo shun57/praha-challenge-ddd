@@ -11,8 +11,8 @@ model Participant {
   id                     String                  @id
   name                   String                  @db.VarChar(255)
   email                  String                  @unique
-  enrollmentStatus       String                  @db.VarChar(255)
   participantChallenges  ParticipantChallenge[]
+  membership             Membership?
 }
 
 model Challenge {
@@ -23,20 +23,33 @@ model Challenge {
 }
 
 model ParticipantChallenge {
-  participantId String       @unique
-  challengeId   String       @unique
-  progress      String       @db.VarChar(255)
-  participant   Participant  @relation(fields: [participantId], references: [id])
-  challenge     Challenge    @relation(fields: [challengeId], references: [id])
+  participantId          String                  @unique
+  challengeId            String                  @unique
+  progress               String                  @db.VarChar(255)
+  participant            Participant             @relation(fields: [participantId], references: [id])
+  challenge              Challenge               @relation(fields: [challengeId], references: [id])
   @@id([participantId, challengeId])
 }
 
+model Membership {
+  id                     String       @id
+  participantId          String       @unique
+  teamId                 String
+  pairId                 String
+  enrollmentStatus       String       @db.VarChar(255)
+  participant            Participant  @relation(fields: [participantId], references: [id])
+  team                   Team         @relation(fields: [teamId], references: [id])
+  pair                   Pair         @relation(fields: [pairId], references: [id])
+}
+
 model Team {
-  id                String   @id
-  name              String   @db.VarChar(255)
+  id                     String   @id
+  name                   String   @db.VarChar(255)
+  membership             Membership[]
 }
 
 model Pair {
-  id                String   @id
-  name              String   @db.VarChar(255)
+  id                     String   @id
+  name                   String   @db.VarChar(255)
+  membership             Membership[]
 }
