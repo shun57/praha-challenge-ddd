@@ -23,9 +23,9 @@ describe('do', () => {
   }, new UniqueEntityID(param.membershipId))
 
   let updatedMembershipEntity = Membership.create({
-    participantId: membershipEntity.participantId,
+    participantId: ParticipantId.create(new UniqueEntityID(param.newParticipantId)),
     teamId: membershipEntity.teamId,
-    pairId: PairId.create(new UniqueEntityID(param.newParticipantId)),
+    pairId: membershipEntity.pairId,
     enrollmentStatus: MembershipEnrollmentStatus.create({ value: "在籍中" }),
   }, membershipEntity.membershipId.id)
 
