@@ -18,6 +18,7 @@ import { ParticipantRepository } from 'src/infra/db/repository/participant-repos
 import { ChangePairParticipantUseCase } from 'src/app/membership/change-pair-participant-usecase'
 import { MembershipRepository } from 'src/infra/db/repository/membership-repository'
 import { MembershipController } from 'src/controller/membership/membership.controller'
+import { ChangeTeamPairUseCase } from 'src/app/membership/change-team-pair-usecase'
 
 @Module({
   imports: [],
@@ -61,7 +62,12 @@ import { MembershipController } from 'src/controller/membership/membership.contr
     {
       provide: ConstantTokens.REPOSITORY,
       useClass: MembershipRepository
-    }
+    },
+    ChangeTeamPairUseCase,
+    {
+      provide: ConstantTokens.REPOSITORY,
+      useClass: MembershipRepository
+    },
   ],
 })
 export class AppModule { }
