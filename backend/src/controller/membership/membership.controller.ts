@@ -1,7 +1,7 @@
-import { HttpCode, Body, Param, Controller, Get, Post, Patch } from '@nestjs/common'
+import { HttpCode, Param, Controller, Patch } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
 import { ChangePairParticipantUseCase } from 'src/app/membership/change-pair-participant-usecase'
-import { PatchParticipantPairRequest } from 'src/controller/membership/request/patch-participant-pair-request'
+import { PatchPairParticipantRequest } from 'src/controller/membership/request/patch-pair-participant-request'
 
 @Controller('memberships')
 export class MembershipController {
@@ -13,7 +13,7 @@ export class MembershipController {
   @HttpCode(204)
   @ApiResponse({ status: 204 })
   async changePairParticipant(
-    @Param() params: PatchParticipantPairRequest
+    @Param() params: PatchPairParticipantRequest
   ): Promise<void> {
     await this.changePairParticipantUseCase.do({
       membershipId: params.membershipId,

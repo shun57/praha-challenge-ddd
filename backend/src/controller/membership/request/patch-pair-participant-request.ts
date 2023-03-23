@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty } from 'class-validator'
 
-export class PatchParticipantPairRequest {
+export class PatchPairParticipantRequest {
   @ApiProperty()
   @IsNotEmpty()
   readonly membershipId!: string
