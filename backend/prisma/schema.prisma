@@ -11,6 +11,7 @@ model Participant {
   id                     String                  @id
   name                   String                  @db.VarChar(255)
   email                  String                  @unique
+  enrollmentStatus       String       @db.VarChar(255)
   participantChallenges  ParticipantChallenge[]
   membership             Membership?
 }
@@ -36,7 +37,6 @@ model Membership {
   participantId          String       @unique
   teamId                 String
   pairId                 String
-  enrollmentStatus       String       @db.VarChar(255)
   participant            Participant  @relation(fields: [participantId], references: [id])
   team                   Team         @relation(fields: [teamId], references: [id])
   pair                   Pair         @relation(fields: [pairId], references: [id])
