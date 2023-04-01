@@ -22,6 +22,10 @@ export class ParticipantEnrollmentStatus extends ValueObject<ParticipantEnrollme
     super(props);
   }
 
+  public isEnrolled() {
+    return this.props.value === EnrollmentStatusType.enrolled
+  }
+
   public static create(props: ParticipantEnrollmentStatusProps): ParticipantEnrollmentStatus {
     const statusList = Object.values(EnrollmentStatusType);
     if (!statusList.find((status: EnrollmentStatusType) => status === props.value)) {

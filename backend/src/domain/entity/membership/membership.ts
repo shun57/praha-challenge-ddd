@@ -1,16 +1,14 @@
 import { Entity } from 'src/shared/domain/entity'
 import { UniqueEntityID } from 'src/shared/domain/unique-entity-id'
-import { ParticipantId } from 'src/domain/value-object/participant/participant-id'
 import { PairId } from 'src/domain/value-object/pair/pair-id'
 import { TeamId } from 'src/domain/value-object/team/team-id'
-import { MembershipEnrollmentStatus } from 'src/domain/value-object/membership/membership-enrollment-status'
 import { MembershipId } from 'src/domain/value-object/membership/membership-id'
+import { Participant } from '../participant/participant'
 
 interface MembershipProps {
-  participantId: ParticipantId
+  participant: Participant
   pairId: PairId
   teamId: TeamId
-  enrollmentStatus: MembershipEnrollmentStatus
 }
 
 export class Membership extends Entity<MembershipProps> {
@@ -19,8 +17,8 @@ export class Membership extends Entity<MembershipProps> {
     return MembershipId.create(this._id);
   }
 
-  get participantId(): ParticipantId {
-    return this.props.participantId
+  get participant(): Participant {
+    return this.props.participant
   }
 
   get pairId(): PairId {
@@ -31,23 +29,26 @@ export class Membership extends Entity<MembershipProps> {
     return this.props.teamId
   }
 
-  get enrollmentStatus(): MembershipEnrollmentStatus {
-    return this.props.enrollmentStatus
-  }
-
   private constructor(props: MembershipProps, id?: UniqueEntityID) {
     super(props, id)
   }
 
-  public changeTeamPair(pairId: PairId) {
+  public changeTeam(teamId: TeamId) {
+    this.props.teamId = teamId
+  }
+
+  public changePair(pairId: PairId) {
     this.props.pairId = pairId
   }
 
-  public changePairParticipant(participantId: ParticipantId) {
-    this.props.participantId = participantId
+  public static isValidEnrollmentStatus(participant: Participant): boolean {
+    return !participant.enrollmentStatus.isEnrolled()
   }
 
   public static create(props: MembershipProps, id?: UniqueEntityID): Membership {
+    if (this.isValidEnrollmentStatus(props.participant)) {
+      throw new Error("在籍中でない場合、チーム・ペアに所属できません。")
+    }
     const membership = new Membership({ ...props }, id)
     return membership
   }
