@@ -13,7 +13,7 @@ model Participant {
   email                  String                  @unique
   enrollmentStatus       String       @db.VarChar(255)
   participantChallenges  ParticipantChallenge[]
-  membership             Membership?
+  pairMembers            PairMember[]
 }
 
 model Challenge {
@@ -32,24 +32,24 @@ model ParticipantChallenge {
   @@id([participantId, challengeId])
 }
 
-model Membership {
+model PairMember {
   id                     String       @id
-  participantId          String       @unique
-  teamId                 String
-  pairId                 String
   participant            Participant  @relation(fields: [participantId], references: [id])
-  team                   Team         @relation(fields: [teamId], references: [id])
   pair                   Pair         @relation(fields: [pairId], references: [id])
+  participantId          String
+  pairId                 String
 }
 
 model Team {
   id                     String   @id
   name                   String   @db.VarChar(255)
-  membership             Membership[]
+  pairs                  Pair[]
 }
 
 model Pair {
-  id                     String   @id
-  name                   String   @db.VarChar(255)
-  membership             Membership[]
+  id                     String        @id
+  name                   String        @db.VarChar(255)
+  pairMembers            PairMember[]
+  team                   Team          @relation(fields: [teamId], references: [id])
+  teamId                 String
 }
