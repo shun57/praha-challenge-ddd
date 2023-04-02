@@ -6,6 +6,7 @@ import { TeamId } from "src/domain/value-object/team/team-id";
 export interface IPairRepository {
   getAll(): Promise<Pair[]>
   getById(pairId: PairId): Promise<Pair | null>
+  getByTeamId(teamId: TeamId): Promise<Pair[]>
   getByIds(pairId: PairId[]): Promise<Pair[]>
   getByParticipantIds(participantIds: ParticipantId[]): Promise<Pair[]>
   save(pair: Pair): Promise<Pair>
