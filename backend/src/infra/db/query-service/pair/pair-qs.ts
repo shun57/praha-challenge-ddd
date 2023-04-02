@@ -8,8 +8,8 @@ export class PairQS implements IPairQS {
   public constructor(private readonly prisma: PrismaService) { }
 
   public async getAll(): Promise<PairDTO[]> {
-    const allParticipants = await this.prisma.pair.findMany()
-    return allParticipants.map(
+    const pairs = await this.prisma.pair.findMany()
+    return pairs.map(
       (pair) =>
         new PairDTO({
           ...pair,

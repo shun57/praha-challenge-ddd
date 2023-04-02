@@ -29,6 +29,19 @@ export class TeamRepository implements ITeamRepository {
     return TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs })
   }
 
+  public async getAll(): Promise<Team[]> {
+    const teams = await this.prisma.team.findMany({
+      include: {
+        pairs: true
+      }
+    })
+    let teamsEntity: Team[] = []
+    teams.map((team) => {
+      teamsEntity.push(TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs }))
+    })
+    return teamsEntity
+  }
+
   public async save(team: Team): Promise<Team> {
     return await this.prisma.$transaction(async (prisma) => {
       const { id, name, pairIds } = TeamMapper.toData(team)

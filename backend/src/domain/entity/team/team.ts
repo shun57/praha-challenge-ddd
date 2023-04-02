@@ -9,8 +9,6 @@ interface TeamProps {
   pairIds: PairId[]
 }
 
-const TEAM_LOWER_LIMIT = 3
-
 export class Team extends Entity<TeamProps> {
 
   get teamId(): TeamId {

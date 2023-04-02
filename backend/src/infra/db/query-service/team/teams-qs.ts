@@ -8,8 +8,8 @@ export class TeamQS implements ITeamQS {
   public constructor(private readonly prisma: PrismaService) { }
 
   public async getAll(): Promise<TeamDTO[]> {
-    const allParticipants = await this.prisma.team.findMany()
-    return allParticipants.map(
+    const teams = await this.prisma.team.findMany()
+    return teams.map(
       (team) =>
         new TeamDTO({
           ...team,
