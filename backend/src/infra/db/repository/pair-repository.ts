@@ -28,7 +28,7 @@ export class PairRepository implements IPairRepository {
       return null
     }
     // 参加者を取得
-    const participants = pair.pairMembers.map((pairMember) => pairMember.participant);
+    const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
     return PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants })
   }
 

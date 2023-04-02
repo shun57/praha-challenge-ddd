@@ -1,6 +1,5 @@
 import { Participant } from "@prisma/client";
 import { Pair } from "src/domain/entity/pair/pair";
-import { MembershipId } from "src/domain/value-object/membership/membership-id";
 import { PairName } from "src/domain/value-object/pair/pair-name";
 import { ParticipantId } from "src/domain/value-object/participant/participant-id";
 import { TeamId } from "src/domain/value-object/team/team-id";
@@ -13,7 +12,7 @@ export class PairMapper {
     let participantIds: ParticipantId[] = []
 
     participants.map((participant) => {
-      participantIds.push(MembershipId.create(new UniqueEntityID(participant.id)))
+      participantIds.push(ParticipantId.create(new UniqueEntityID(participant.id)))
     })
 
     const pairEntity = Pair.create({
