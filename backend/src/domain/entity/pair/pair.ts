@@ -36,25 +36,25 @@ export class Pair extends Entity<PairProps> {
     super(props, id)
   }
 
-  public joinMember(participantIds: ParticipantId): void {
-    this.props.participantIds.push(participantIds)
+  public join(participantId: ParticipantId): void {
+    this.props.participantIds.push(participantId)
   }
 
-  public removeMember(participantIds: ParticipantId): void {
+  public remove(participantIds: ParticipantId): void {
     const index = this.props.participantIds.indexOf(participantIds);
     this.props.participantIds.splice(index, 1)
   }
 
-  public countMemberships(): number {
+  public numberOfParticipants(): number {
     return this.props.participantIds.length
   }
 
-  public isMaxMemberships(): boolean {
-    return this.countMemberships() === PAIR_UPPER_LIMIT
+  public isMaxParticipants(): boolean {
+    return this.props.participantIds.length === PAIR_UPPER_LIMIT
   }
 
-  public isMinimumMembershipsOrLess(): boolean {
-    return this.countMemberships() < PAIR_LOWER_LIMIT
+  public isMinParticipants(): boolean {
+    return this.props.participantIds.length === PAIR_LOWER_LIMIT
   }
 
   public static isValidNumberOfParticipants(participantIds: ParticipantId[]): boolean {

@@ -4,10 +4,23 @@ import { IParticipantRepository } from 'src/domain/interface/participant/reposit
 import { Participant } from 'src/domain/entity/participant/participant';
 import { ParticipantEmail } from 'src/domain/value-object/participant/participant-email';
 import { ParticipantMapper } from 'src/infra/mapper/participant-mapper';
+import { ParticipantId } from 'src/domain/value-object/participant/participant-id';
 
 @Injectable()
 export class ParticipantRepository implements IParticipantRepository {
   public constructor(private readonly prisma: PrismaService) { }
+
+  public async getById(participantId: ParticipantId): Promise<Participant | null> {
+    const participant = await this.prisma.participant.findUnique({
+      where: {
+        id: participantId.id.toString()
+      }
+    })
+    if (participant === null) {
+      return null
+    }
+    return ParticipantMapper.toEntity({ id: participant.id, name: participant.name, email: participant.email, enrollmentStatus: participant.enrollmentStatus })
+  }
 
   public async getByEmail(email: ParticipantEmail): Promise<Participant | null> {
     const participant = await this.prisma.participant.findUnique({

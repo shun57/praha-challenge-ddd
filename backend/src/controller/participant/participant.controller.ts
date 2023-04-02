@@ -6,13 +6,16 @@ import { GetAllParticipantsResponse } from 'src/controller/participant/response/
 import { PatchParticipantChallengeRequest } from 'src/controller/participant/request/patch-participant-challenge-request'
 import { PostParticipantRequest } from 'src/controller/participant/request/post-participant-request'
 import { CreateParticipantUseCase } from 'src/app/participant/create-participant-usecase'
+import { UpdateParticipantUseCase } from 'src/app/participant/update-participant-usecase'
+import { PatchParticipantRequest } from 'src/controller/participant/request/patch-participant-request'
 
 @Controller('participants')
 export class ParticipantController {
   constructor(
     private readonly getAllParticipantsUseCase: GetAllParticipantsUseCase,
-    private readonly updateParticipantChallengeProgressUsecase: UpdateParticipantChallengeProgressUseCase,
     private readonly createParticipantUseCase: CreateParticipantUseCase,
+    private readonly updateParticipantUseCase: UpdateParticipantUseCase,
+    private readonly updateParticipantChallengeProgressUsecase: UpdateParticipantChallengeProgressUseCase,
   ) { }
 
   @Get()
@@ -31,6 +34,19 @@ export class ParticipantController {
     await this.createParticipantUseCase.do({
       name: postParticipantDto.name,
       email: postParticipantDto.email
+    })
+  }
+
+  @Patch(':participantId')
+  @HttpCode(204)
+  @ApiResponse({ status: 204 })
+  async update(
+    @Param('participantId') participantId: string,
+    @Body() patchParticipantRequest: PatchParticipantRequest,
+  ): Promise<void> {
+    await this.updateParticipantUseCase.do({
+      participantId: participantId,
+      enrollmentStatus: patchParticipantRequest.enrollmentStatus
     })
   }
 

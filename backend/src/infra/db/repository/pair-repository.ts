@@ -3,6 +3,7 @@ import { Pair } from 'src/domain/entity/pair/pair';
 import { IPairRepository } from 'src/domain/interface/pair/repository-interface/pair-repository';
 import { PairId } from 'src/domain/value-object/pair/pair-id';
 import { ParticipantId } from 'src/domain/value-object/participant/participant-id';
+import { TeamId } from 'src/domain/value-object/team/team-id';
 import { PrismaService } from 'src/infra/db/prisma.service'
 import { PairMapper } from 'src/infra/mapper/pair-mapper';
 import { UniqueEntityID } from 'src/shared/domain/unique-entity-id';
@@ -10,6 +11,26 @@ import { UniqueEntityID } from 'src/shared/domain/unique-entity-id';
 @Injectable()
 export class PairRepository implements IPairRepository {
   public constructor(private readonly prisma: PrismaService) { }
+
+  public async getAll(): Promise<Pair[]> {
+    const pairs = await this.prisma.pair.findMany({
+      include: {
+        pairMembers: {
+          select: {
+            participant: true,
+          },
+        },
+      },
+    })
+    // ペアをエンティティに変換
+    let pairsEntity: Pair[] = []
+    pairs.map((pair) => {
+      const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
+      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants }))
+    })
+
+    return pairsEntity
+  }
 
   public async getById(pairId: PairId): Promise<Pair | null> {
     const pair = await this.prisma.pair.findUnique({
@@ -28,6 +49,53 @@ export class PairRepository implements IPairRepository {
       return null
     }
     // 参加者を取得
+    const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
+    return PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants })
+  }
+
+  public async getByTeamId(teamId: TeamId): Promise<Pair[]> {
+    const pairs = await this.prisma.pair.findMany({
+      where: {
+        id: teamId.id.toString(),
+      },
+      include: {
+        pairMembers: {
+          select: {
+            participant: true,
+          },
+        },
+      },
+    })
+    // ペアをエンティティに変換
+    let pairsEntity: Pair[] = []
+    pairs.map((pair) => {
+      const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
+      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants }))
+    })
+    return pairsEntity
+  }
+
+  public async getByParticipantId(participantId: ParticipantId): Promise<Pair | null> {
+    // 参加者のペアを取得
+    const pair = await this.prisma.pair.findFirst({
+      where: {
+        pairMembers: {
+          some: {
+            participantId: participantId.id.toString()
+          }
+        }
+      },
+      include: {
+        pairMembers: {
+          select: {
+            participant: true,
+          },
+        },
+      },
+    })
+    if (!pair) {
+      return null
+    }
     const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
     return PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants })
   }

@@ -1,12 +1,12 @@
 import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
-import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
-import { PairId } from "src/domain/value-object/pair/pair-id";
-import { ITeamRepository } from "src/domain/interface/team/repository-interface/team-repository";
-import { TeamId } from "src/domain/value-object/team/team-id";
-import { TeamMemberSatisfySpecification } from "src/domain/specification/team-member-satisfy-specification";
-import { Team } from "src/domain/entity/team/team";
-import { IPairRepository } from "src/domain/interface/pair/repository-interface/pair-repository";
+import { UniqueEntityID } from "src/shared/domain/unique-entity-id"
+import { PairId } from "src/domain/value-object/pair/pair-id"
+import { ITeamRepository } from "src/domain/interface/team/repository-interface/team-repository"
+import { TeamId } from "src/domain/value-object/team/team-id"
+import { TeamMemberSatisfySpecification } from "src/domain/specification/team-member-satisfy-specification"
+import { Team } from "src/domain/entity/team/team"
+import { IPairRepository } from "src/domain/interface/pair/repository-interface/pair-repository"
 
 export class ChangeTeamPairsUseCase {
   public constructor(

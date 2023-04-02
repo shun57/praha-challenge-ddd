@@ -7,7 +7,7 @@ export interface IPairRepository {
   getAll(): Promise<Pair[]>
   getById(pairId: PairId): Promise<Pair | null>
   getByTeamId(teamId: TeamId): Promise<Pair[]>
-  getByIds(pairId: PairId[]): Promise<Pair[]>
+  getByParticipantId(participantId: ParticipantId): Promise<Pair | null>
   getByParticipantIds(participantIds: ParticipantId[]): Promise<Pair[]>
   save(pair: Pair): Promise<Pair>
 }
