@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ParticipantDTO } from 'src/app/participant/dto/participant'
-import { IParticipantQS } from 'src/domain/interface/participant/query-service-interface/participant-qs'
+import { IParticipantQS } from 'src/app/participant/query-service-interface/participant-qs'
 import { PrismaService } from 'src/infra/db/prisma.service'
 
 @Injectable()

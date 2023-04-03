@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TeamDTO } from 'src/app/team/dto/team'
-import { ITeamQS } from 'src/domain/interface/team/query-service-interface/team-qs'
+import { ITeamQS } from 'src/app/team/query-service-interface/team-qs'
 import { PrismaService } from 'src/infra/db/prisma.service'
 
 @Injectable()

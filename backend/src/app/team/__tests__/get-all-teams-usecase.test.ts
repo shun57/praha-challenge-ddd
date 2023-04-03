@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetAllTeamsUseCase } from 'src/app/team/get-all-teams-usecase';
 import { ConstantTokens } from 'src/shared/constants';
-import { ITeamQS } from 'src/domain/interface/team/query-service-interface/team-qs';
+import { ITeamQS } from 'src/app/team/query-service-interface/team-qs';
 
 describe('do', () => {
   let useCase: GetAllTeamsUseCase;
