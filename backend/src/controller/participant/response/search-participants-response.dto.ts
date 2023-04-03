@@ -1,11 +1,11 @@
 import { ParticipantDTO } from 'src/app/participant/dto/participant'
 
-export class GetAllParticipantsResponse {
+export class SearchParticipantsResponse {
   participants: Participant[]
 
-  public constructor(params: { participants: ParticipantDTO[] }) {
+  public constructor(params: { participants: Page<ParticipantDTO> }) {
     const { participants } = params
-    this.participants = participants.map(({ id, name, email, enrollmentStatus }) => {
+    this.participants = participants.items.map(({ id, name, email, enrollmentStatus }) => {
       return new Participant({
         id,
         name,

@@ -1,28 +1,35 @@
-import { HttpCode, Body, Param, Controller, Get, Post, Patch } from '@nestjs/common'
+import { HttpCode, Body, Param, Query, Controller, Get, Post, Patch } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
-import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-participants-usecase'
 import { UpdateParticipantChallengeProgressUseCase } from 'src/app/participant/update-participant-challenge-progress-usecase'
-import { GetAllParticipantsResponse } from 'src/controller/participant/response/get-all-participants-response.dto'
 import { PatchParticipantChallengeRequest } from 'src/controller/participant/request/patch-participant-challenge-request'
 import { PostParticipantRequest } from 'src/controller/participant/request/post-participant-request'
 import { CreateParticipantUseCase } from 'src/app/participant/create-participant-usecase'
 import { UpdateParticipantUseCase } from 'src/app/participant/update-participant-usecase'
 import { PatchParticipantRequest } from 'src/controller/participant/request/patch-participant-request'
+import { SearchParticipantsRequest } from './request/search-participant-request'
+import { SearchParticipantsUseCase } from 'src/app/participant/search-participants-usecase'
+import { SearchParticipantsResponse } from './response/search-participants-response.dto'
 
 @Controller('participants')
 export class ParticipantController {
   constructor(
-    private readonly getAllParticipantsUseCase: GetAllParticipantsUseCase,
+    private readonly searchParticipantsUseCase: SearchParticipantsUseCase,
     private readonly createParticipantUseCase: CreateParticipantUseCase,
     private readonly updateParticipantUseCase: UpdateParticipantUseCase,
     private readonly updateParticipantChallengeProgressUsecase: UpdateParticipantChallengeProgressUseCase,
   ) { }
 
   @Get()
-  @ApiResponse({ status: 200, type: GetAllParticipantsResponse })
-  async getAll(): Promise<GetAllParticipantsResponse> {
-    const participants = await this.getAllParticipantsUseCase.do()
-    return new GetAllParticipantsResponse({ participants: participants })
+  @ApiResponse({ status: 200, type: SearchParticipantsResponse })
+  async searchParticipants(
+    @Query() searchParticipantsDto: SearchParticipantsRequest,
+  ): Promise<SearchParticipantsResponse> {
+    const participants = await this.searchParticipantsUseCase.do({
+      challengeIds: searchParticipantsDto.challengeIds,
+      progress: searchParticipantsDto.progress,
+      pageNumber: searchParticipantsDto.pageNumber
+    })
+    return new SearchParticipantsResponse({ participants: participants })
   }
 
   @Post()
