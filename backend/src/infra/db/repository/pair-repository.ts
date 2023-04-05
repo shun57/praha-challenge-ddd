@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Pair } from 'src/domain/entity/pair/pair';
-import { IPairRepository } from 'src/domain/interface/pair/repository-interface/pair-repository';
+import { IPairRepository } from 'src/domain/interface/pair/pair-repository';
 import { PairId } from 'src/domain/value-object/pair/pair-id';
 import { ParticipantId } from 'src/domain/value-object/participant/participant-id';
 import { TeamId } from 'src/domain/value-object/team/team-id';

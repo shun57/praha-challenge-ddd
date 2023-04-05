@@ -1,5 +1,5 @@
 import { Team } from "src/domain/entity/team/team"
-import { IPairRepository } from "../interface/pair/repository-interface/pair-repository"
+import { IPairRepository } from "../interface/pair/pair-repository"
 
 export class TeamMemberSatisfySpecification {
   private readonly teamLowerLimit = 3

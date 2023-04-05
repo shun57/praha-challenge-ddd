@@ -1,5 +1,5 @@
 import { Pair } from "src/domain/entity/pair/pair"
-import { IPairRepository } from "../interface/pair/repository-interface/pair-repository"
+import { IPairRepository } from "../interface/pair/pair-repository"
 
 
 export class PairService {

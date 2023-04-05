@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Team } from 'src/domain/entity/team/team';
-import { ITeamRepository } from 'src/domain/interface/team/repository-interface/team-repository';
+import { ITeamRepository } from 'src/domain/interface/team/team-repository';
 import { TeamId } from 'src/domain/value-object/team/team-id';
 import { PrismaService } from 'src/infra/db/prisma.service'
 import { TeamMapper } from 'src/infra/mapper/team-mapper';

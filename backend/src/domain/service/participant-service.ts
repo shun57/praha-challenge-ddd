@@ -1,5 +1,5 @@
 import { Participant } from "../entity/participant/participant"
-import { IParticipantRepository } from "src/domain/interface/participant/repository-interface/participant-repository"
+import { IParticipantRepository } from "src/domain/interface/participant/participant-repository"
 
 
 export class ParticipantService {

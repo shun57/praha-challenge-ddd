@@ -1,6 +1,6 @@
 import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
-import { IParticipantRepository } from "src/domain/interface/participant/repository-interface/participant-repository";
+import { IParticipantRepository } from "src/domain/interface/participant/participant-repository";
 import { Participant } from "src/domain/entity/participant/participant";
 import { ParticipantName } from "src/domain/value-object/participant/participant-name";
 import { ParticipantEmail } from "src/domain/value-object/participant/participant-email";

@@ -2,7 +2,7 @@ import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
 import { ParticipantId } from "src/domain/value-object/participant/participant-id";
-import { IPairRepository } from "src/domain/interface/pair/repository-interface/pair-repository";
+import { IPairRepository } from "src/domain/interface/pair/pair-repository";
 import { PairId } from "src/domain/value-object/pair/pair-id";
 import { PairService } from "src/domain/service/pair-service";
 import { Pair } from "src/domain/entity/pair/pair";

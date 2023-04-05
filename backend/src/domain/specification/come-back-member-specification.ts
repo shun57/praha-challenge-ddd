@@ -1,8 +1,7 @@
 import { Pair } from 'src/domain/entity/pair/pair'
-import { ITeamRepository } from '../interface/team/repository-interface/team-repository'
-import { IPairRepository } from '../interface/pair/repository-interface/pair-repository'
+import { ITeamRepository } from '../interface/team/team-repository'
+import { IPairRepository } from '../interface/pair/pair-repository'
 import { Team } from 'src/domain/entity/team/team'
-import { MembershipId } from '../value-object/membership/membership-id'
 import { PairName } from '../value-object/pair/pair-name'
 import { ParticipantId } from '../value-object/participant/participant-id'
 
