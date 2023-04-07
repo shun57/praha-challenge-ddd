@@ -27,6 +27,7 @@
     "test:integration": "yarn migrate:test && dotenv -e .test.env -- jest -c ./jest.integration.config.js --runInBand"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.3.7",
     "@nestjs/core": "^9.3.7",
     "@nestjs/platform-express": "^9.3.7",
