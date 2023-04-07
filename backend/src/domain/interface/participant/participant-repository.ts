@@ -4,6 +4,7 @@ import { ParticipantId } from "src/domain/value-object/participant/participant-i
 
 export interface IParticipantRepository {
   getById(participantId: ParticipantId): Promise<Participant | null>
+  getByIds(participantIds: ParticipantId[]): Promise<Participant[]>
   getByEmail(email: ParticipantEmail): Promise<Participant | null>
   save(participant: Participant): Promise<Participant>
 }
