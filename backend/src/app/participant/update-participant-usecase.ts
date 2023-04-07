@@ -8,7 +8,7 @@ import { SecessionMemberSpecification } from "src/domain/specification/secession
 import { ParticipantEnrollmentStatus } from "src/domain/value-object/participant/participant-enrollment-status";
 import { ParticipantId } from "src/domain/value-object/participant/participant-id";
 import { IParticipantRepository } from "src/domain/interface/participant/participant-repository";
-import { IEmailRepository } from "src/domain/interface/mail/mail-repository";
+import { IMailRepository } from "src/domain/interface/mail/mail-repository";
 import { IPairMemberRepository } from "src/domain/interface/pair-member/pair-member-repository";
 
 export class UpdateParticipantUseCase {
@@ -17,7 +17,7 @@ export class UpdateParticipantUseCase {
     @Inject(ConstantTokens.TEAM_REPOSITORY) private readonly teamRepo: ITeamRepository,
     @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairRepo: IPairRepository,
     @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairMemberRepo: IPairMemberRepository,
-    @Inject(ConstantTokens.MAIL_REPOSITORY) private readonly mailRepo: IEmailRepository,
+    @Inject(ConstantTokens.MAIL_REPOSITORY) private readonly mailRepo: IMailRepository,
   ) { }
 
   public async do(params: { participantId: string, enrollmentStatus: string }) {
