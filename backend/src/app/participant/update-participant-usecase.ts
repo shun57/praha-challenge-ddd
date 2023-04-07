@@ -2,18 +2,22 @@ import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
 import { ComeBackMemberSpecification } from "src/domain/specification/come-back-member-specification";
-import { ITeamRepository } from "src/domain/interface/team/repository-interface/team-repository";
-import { IPairRepository } from "src/domain/interface/pair/repository-interface/pair-repository";
+import { ITeamRepository } from "src/domain/interface/team/team-repository";
+import { IPairRepository } from "src/domain/interface/pair/pair-repository";
 import { SecessionMemberSpecification } from "src/domain/specification/secession-member-specification";
 import { ParticipantEnrollmentStatus } from "src/domain/value-object/participant/participant-enrollment-status";
 import { ParticipantId } from "src/domain/value-object/participant/participant-id";
-import { IParticipantRepository } from "src/domain/interface/participant/repository-interface/participant-repository";
+import { IParticipantRepository } from "src/domain/interface/participant/participant-repository";
+import { IEmailRepository } from "src/domain/interface/mail/mail-repository";
+import { IPairMemberRepository } from "src/domain/interface/pair-member/pair-member-repository";
 
 export class UpdateParticipantUseCase {
   public constructor(
     @Inject(ConstantTokens.PARTICIPANT_REPOSITORY) private readonly participantRepo: IParticipantRepository,
     @Inject(ConstantTokens.TEAM_REPOSITORY) private readonly teamRepo: ITeamRepository,
     @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairRepo: IPairRepository,
+    @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairMemberRepo: IPairMemberRepository,
+    @Inject(ConstantTokens.MAIL_REPOSITORY) private readonly mailRepo: IEmailRepository,
   ) { }
 
   public async do(params: { participantId: string, enrollmentStatus: string }) {
@@ -22,9 +26,7 @@ export class UpdateParticipantUseCase {
 
     try {
       // 現在の参加者を取得
-      const participant = await this.participantRepo.getById(
-        ParticipantId.create(new UniqueEntityID(participantId))
-      )
+      const participant = await this.participantRepo.getById(ParticipantId.create(new UniqueEntityID(participantId)))
       if (!participant) {
         throw new Error("対象の会員が存在しません。")
       }
@@ -47,7 +49,7 @@ export class UpdateParticipantUseCase {
 
       } else if (participant.isSecession(newEnrollmentStatus)) {
         // 脱退し、ペアとチームから抜ける
-        const secessionMemberSpecification = new SecessionMemberSpecification(this.teamRepo, this.pairRepo)
+        const secessionMemberSpecification = new SecessionMemberSpecification(this.teamRepo, this.pairRepo, this.pairMemberRepo, this.participantRepo, this.mailRepo)
         // ペアの参加者数が条件を満たさなくなった場合、別ペアに合流させる
         const pair = await secessionMemberSpecification.moveAnotherPairIfPairMemberNotFilled(participant)
         // チームの参加者数が条件を満たさなくなった場合、アラートメールを送る

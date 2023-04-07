@@ -1,16 +1,33 @@
+import { NotExistJoinPairNotifyMail } from "../entity/pair/not-exist-join-pair-notify-mail"
 import { Pair } from "../entity/pair/pair"
 import { Participant } from "../entity/participant/participant"
-import { IPairRepository } from "../interface/pair/repository-interface/pair-repository"
-import { ITeamRepository } from "../interface/team/repository-interface/team-repository"
+import { TeamMemberNotSatisfiedNotifyMail } from "../entity/team/team-member-not-satisfied-notify-mail"
+import { IMailRepository } from "../interface/mail/mail-repository"
+import { IPairMemberRepository } from "../interface/pair-member/pair-member-repository"
+import { IPairRepository } from "../interface/pair/pair-repository"
+import { IParticipantRepository } from "../interface/participant/participant-repository"
+import { ITeamRepository } from "../interface/team/team-repository"
 import { ComeBackMemberSpecification } from "./come-back-member-specification"
 import { TeamMemberSatisfySpecification } from "./team-member-satisfy-specification"
 
 export class SecessionMemberSpecification {
   private teamRepo: ITeamRepository
   private pairRepo: IPairRepository
-  public constructor(teamRepo: ITeamRepository, pairRepo: IPairRepository) {
+  private pairMemberRepo: IPairMemberRepository
+  private participantRepo: IParticipantRepository
+  private mailRepo: IMailRepository
+  public constructor(
+    teamRepo: ITeamRepository,
+    pairRepo: IPairRepository,
+    pairMemberRepo: IPairMemberRepository,
+    participantRepo: IParticipantRepository,
+    mailRepo: IMailRepository
+  ) {
     this.teamRepo = teamRepo
     this.pairRepo = pairRepo
+    this.pairMemberRepo = pairMemberRepo
+    this.participantRepo = participantRepo
+    this.mailRepo = mailRepo
   }
 
   public async moveAnotherPairIfPairMemberNotFilled(participant: Participant): Promise<Pair> {
@@ -29,18 +46,19 @@ export class SecessionMemberSpecification {
       // 他の一番人数の少ないペアを取得
       const comeBackMemberSpecification = new ComeBackMemberSpecification(this.teamRepo, this.pairRepo)
       const minPair = await comeBackMemberSpecification.getMinimumPairToJoin(team)
-      if (!minPair) {
-        // 管理者にメールする
-        // どの参加者が減ったか
-        // どの参加者が合流先を探しているか
-        throw new Error("合流先のペアがありませんでした。")
-      }
       // ペアの残りメンバーを取得
       const pairMembers = pair.participantIds.filter((participantId) => participantId !== participant.participantId)
-      // 現ペアから抜いて別ペアに加える
-      pair.remove(pairMembers[0]!)
-      minPair.join(pairMembers[0]!)
-      await this.pairRepo.save(minPair)
+      // 合流先のペアがない場合は通知を送る
+      if (!minPair) {
+        const notExistJoinPairNotifyMail = new NotExistJoinPairNotifyMail()
+        const email = notExistJoinPairNotifyMail.buildEmail(participant, pairMembers[0]!)
+        await this.mailRepo.send(email)
+      } else {
+        // 合流先ペアがある場合、現ペアから抜いて加える
+        pair.remove(pairMembers[0]!)
+        minPair.join(pairMembers[0]!)
+        await this.pairRepo.save(minPair)
+      }
     }
     // ペアから参加者を減らす
     pair.remove(participant.participantId)
@@ -48,9 +66,8 @@ export class SecessionMemberSpecification {
     return pair
   }
 
-  public async sendAlertMailIToAdminerIfTeamMemberNotFilled(participant: Participant, pair: Pair): Promise<void> {
+  public async sendAlertMailIToAdminerIfTeamMemberNotFilled(withdrawParticipant: Participant, pair: Pair): Promise<void> {
     // TODO：チームの参加者数を取得する処理を切り出し
-
     // 現在のチームを取得
     const team = await this.teamRepo.getById(pair.teamId)
     if (!team) {
@@ -59,10 +76,14 @@ export class SecessionMemberSpecification {
     // チームが最少人数を満たさなくなった場合
     const teamMemberSatisfySpecification = new TeamMemberSatisfySpecification(this.pairRepo)
     if (!await teamMemberSatisfySpecification.isSatisfiedBy(team)) {
+      // チームの参加者を取得
+      const pairMembers = await this.pairMemberRepo.getByPairIds(team.pairIds)
+      const participantIds = pairMembers.map(pairMember => pairMember.participantId)
+      const teamMembers = await this.participantRepo.getByIds(participantIds)
       // メール送信
-      // どの参加者が減ったか？
-      // どのチームが2名以下になったか？
-      // そのチームの現在の参加者名
+      const teamMemberNotSatisfiedNotifyMail = new TeamMemberNotSatisfiedNotifyMail()
+      const email = teamMemberNotSatisfiedNotifyMail.buildEmail(team, withdrawParticipant, teamMembers)
+      await this.mailRepo.send(email)
     }
   }
 }

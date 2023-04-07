@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/infra/db/prisma.service'
-import { IParticipantRepository } from 'src/domain/interface/participant/repository-interface/participant-repository';
+import { IParticipantRepository } from 'src/domain/interface/participant/participant-repository';
 import { Participant } from 'src/domain/entity/participant/participant';
 import { ParticipantEmail } from 'src/domain/value-object/participant/participant-email';
 import { ParticipantMapper } from 'src/infra/mapper/participant-mapper';
@@ -20,6 +20,26 @@ export class ParticipantRepository implements IParticipantRepository {
       return null
     }
     return ParticipantMapper.toEntity({ id: participant.id, name: participant.name, email: participant.email, enrollmentStatus: participant.enrollmentStatus })
+  }
+
+  public async getByIds(participantIds: ParticipantId[]): Promise<Participant[]> {
+    let participantIdsStr: string[] = []
+    participantIds.map((participantId) => {
+      participantIdsStr.push(participantId.id.toString())
+    })
+    const participants = await this.prisma.participant.findMany({
+      where: {
+        id: {
+          in: participantIdsStr
+        }
+      }
+    })
+    // Entityに変換
+    let participantEntities: Participant[] = []
+    participants.map((participant) => {
+      participantEntities.push(ParticipantMapper.toEntity({ id: participant.id, name: participant.name, email: participant.email, enrollmentStatus: participant.enrollmentStatus }))
+    })
+    return participantEntities
   }
 
   public async getByEmail(email: ParticipantEmail): Promise<Participant | null> {
