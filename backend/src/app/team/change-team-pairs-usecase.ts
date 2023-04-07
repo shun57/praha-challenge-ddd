@@ -10,7 +10,7 @@ import { IPairRepository } from "src/domain/interface/pair/pair-repository"
 
 export class ChangeTeamPairsUseCase {
   public constructor(
-    @Inject(ConstantTokens.MEMBERSHIP_REPOSITORY) private readonly pairRepo: IPairRepository,
+    @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairRepo: IPairRepository,
     @Inject(ConstantTokens.TEAM_REPOSITORY) private readonly teamRepo: ITeamRepository,
   ) { }
 

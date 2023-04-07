@@ -16,7 +16,7 @@ export class UpdateParticipantUseCase {
     @Inject(ConstantTokens.PARTICIPANT_REPOSITORY) private readonly participantRepo: IParticipantRepository,
     @Inject(ConstantTokens.TEAM_REPOSITORY) private readonly teamRepo: ITeamRepository,
     @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairRepo: IPairRepository,
-    @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairMemberRepo: IPairMemberRepository,
+    @Inject(ConstantTokens.PAIR_MEMBER_REPOSITORY) private readonly pairMemberRepo: IPairMemberRepository,
     @Inject(ConstantTokens.MAIL_REPOSITORY) private readonly mailRepo: IMailRepository,
   ) { }
 
