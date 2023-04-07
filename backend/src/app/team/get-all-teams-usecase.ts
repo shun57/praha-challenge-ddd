@@ -1,16 +1,16 @@
 import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
-import { ITeamQS } from "src/app/team/query-service-interface/team-qs"
+import { ITeamRepository } from "src/domain/interface/team/team-repository"
 
 export class GetAllTeamsUseCase {
     public constructor(
-        @Inject(ConstantTokens.REPOSITORY_QS)
-        private readonly teamQS: ITeamQS
+        @Inject(ConstantTokens.TEAM_REPOSITORY)
+        private readonly teamRepo: ITeamRepository
     ) { }
 
     public async do() {
         try {
-            return await this.teamQS.getAll()
+            return await this.teamRepo.getAll()
         } catch (error) {
             throw error
         }

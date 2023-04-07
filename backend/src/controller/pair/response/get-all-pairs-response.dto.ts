@@ -1,20 +1,21 @@
-import { PairDTO } from 'src/app/pair/dto/pair'
+import { Pair } from "src/domain/entity/pair/pair"
+
 
 export class GetAllPairsResponse {
-  pairs: Pair[]
+  pairs: PairDTO[]
 
-  public constructor(params: { pairs: PairDTO[] }) {
+  public constructor(params: { pairs: Pair[] }) {
     const { pairs } = params
-    this.pairs = pairs.map(({ id, name, }) => {
-      return new Pair({
-        id,
-        name,
+    this.pairs = pairs.map((pair) => {
+      return new PairDTO({
+        id: pair.pairId.id.toString(),
+        name: pair.name.value
       })
     })
   }
 }
 
-class Pair {
+class PairDTO {
   id: string
   name: string
 

@@ -7,7 +7,7 @@ import { ParticipantChallengeProgress } from "src/domain/value-object/participan
 
 export class SearchParticipantsUseCase {
   public constructor(
-    @Inject(ConstantTokens.REPOSITORY_QS)
+    @Inject(ConstantTokens.PARTICIPANT_QS)
     private readonly participantQS: IParticipantQS
   ) { }
 

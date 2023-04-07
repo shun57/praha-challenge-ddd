@@ -1,20 +1,21 @@
-import { TeamDTO } from 'src/app/team/dto/team'
+import { Team } from "src/domain/entity/team/team"
+
 
 export class GetAllTeamsResponse {
-  teams: Team[]
+  teams: TeamDTO[]
 
-  public constructor(params: { teams: TeamDTO[] }) {
+  public constructor(params: { teams: Team[] }) {
     const { teams } = params
-    this.teams = teams.map(({ id, name, }) => {
-      return new Team({
-        id,
-        name,
+    this.teams = teams.map((team) => {
+      return new TeamDTO({
+        id: team.teamId.id.toString(),
+        name: team.name.value
       })
     })
   }
 }
 
-class Team {
+class TeamDTO {
   id: string
   name: string
 
