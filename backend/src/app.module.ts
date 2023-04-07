@@ -1,72 +1,74 @@
 import { Module } from '@nestjs/common'
-import { ParticipantController } from 'src/controller/participant/participant.controller'
-import { GetAllParticipantsUseCase } from 'src/app/participant/get-all-participants-usecase'
-import { ParticipantQS } from 'src/infra/db/query-service/participant/participant-qs'
+import { MailerModule, MailerService } from '@nestjs-modules/mailer'
 import { PrismaService } from 'src/infra/db/prisma.service'
 import { ConstantTokens } from 'src/shared/constants'
+import { ParticipantController } from 'src/controller/participant/participant.controller'
 import { TeamController } from 'src/controller/team/team.controller'
-import { GetAllTeamsUseCase } from 'src/app/team/get-all-teams-usecase'
-import { TeamQS } from 'src/infra/db/query-service/team/teams-qs'
 import { PairController } from 'src/controller/pair/pair.controller'
-import { PairQS } from 'src/infra/db/query-service/pair/pair-qs'
+import { ChangePairParticipantsUseCase } from './app/pair/change-pair-participants-usecase'
 import { GetAllPairsUseCase } from 'src/app/pair/get-all-pairs-usecase'
-import { UpdateParticipantChallengeProgressUseCase } from 'src/app/participant/update-participant-challenge-progress-usecase'
-import { ParticipantChallengeRepository } from 'src/infra/db/repository/participant-challenge-repository'
-import { ParticipantChallengeQS } from 'src/infra/db/query-service/participant/participant-challenge-qs'
 import { CreateParticipantUseCase } from 'src/app/participant/create-participant-usecase'
+import { SearchParticipantsUseCase } from './app/participant/search-participants-usecase'
+import { UpdateParticipantChallengeProgressUseCase } from 'src/app/participant/update-participant-challenge-progress-usecase'
+import { UpdateParticipantUseCase } from './app/participant/update-participant-usecase'
+import { ChangeTeamPairsUseCase } from './app/team/change-team-pairs-usecase'
+import { GetAllTeamsUseCase } from 'src/app/team/get-all-teams-usecase'
+import { ParticipantQS } from 'src/infra/db/query-service/participant/participant-qs'
+import { ParticipantChallengeRepository } from 'src/infra/db/repository/participant-challenge-repository'
 import { ParticipantRepository } from 'src/infra/db/repository/participant-repository'
-import { ChangePairParticipantUseCase } from 'src/app/membership/change-pair-participant-usecase'
-import { MembershipRepository } from 'src/infra/db/repository/membership-repository'
-import { MembershipController } from 'src/controller/membership/membership.controller'
-import { ChangeTeamPairUseCase } from 'src/app/membership/change-team-pair-usecase'
+import { PairRepository } from './infra/db/repository/pair-repository'
+import { TeamRepository } from './infra/db/repository/team-repository'
+import { PairMemberRepository } from './infra/db/repository/pair-member-repository'
+import { MailRepository } from './infra/db/repository/mail-repository'
 
 @Module({
-  imports: [],
-  controllers: [ParticipantController, TeamController, PairController, MembershipController],
+  imports: [
+    MailerModule.forRoot({
+      transport: {
+        host: 'localhost',
+        port: 1025,
+        ignoreTLS: true,
+      },
+    }),
+  ],
+  controllers: [ParticipantController, TeamController, PairController],
   providers: [
     PrismaService,
-    GetAllParticipantsUseCase,
-    {
-      provide: ConstantTokens.REPOSITORY_QS,
-      useClass: ParticipantQS
-    },
+    ChangePairParticipantsUseCase,
+    GetAllPairsUseCase,
+    CreateParticipantUseCase,
+    SearchParticipantsUseCase,
     UpdateParticipantChallengeProgressUseCase,
-    {
-      provide: ConstantTokens.REPOSITORY_QS_PC,
-      useClass: ParticipantChallengeQS,
-    },
-    {
-      provide: ConstantTokens.REPOSITORY,
-      useClass: ParticipantChallengeRepository
-    },
+    UpdateParticipantUseCase,
+    ChangeTeamPairsUseCase,
     GetAllTeamsUseCase,
     {
-      provide: ConstantTokens.REPOSITORY_QS,
-      useClass: TeamQS
+      provide: ConstantTokens.PAIR_REPOSITORY,
+      useClass: PairRepository
     },
-    GetAllPairsUseCase,
     {
-      provide: ConstantTokens.REPOSITORY_QS,
-      useClass: PairQS
+      provide: ConstantTokens.PARTICIPANT_REPOSITORY,
+      useClass: ParticipantRepository
     },
-    CreateParticipantUseCase,
     {
-      provide: ConstantTokens.REPOSITORY_QS_PC,
+      provide: ConstantTokens.PARTICIPANT_QS,
       useClass: ParticipantQS
     },
     {
-      provide: ConstantTokens.REPOSITORY,
-      useClass: ParticipantRepository
+      provide: ConstantTokens.PARTICIPANT_CHALLENGE_REPOSITORY,
+      useClass: ParticipantChallengeRepository
     },
-    ChangePairParticipantUseCase,
     {
-      provide: ConstantTokens.REPOSITORY,
-      useClass: MembershipRepository
+      provide: ConstantTokens.PAIR_MEMBER_REPOSITORY,
+      useClass: PairMemberRepository
     },
-    ChangeTeamPairUseCase,
     {
-      provide: ConstantTokens.REPOSITORY,
-      useClass: MembershipRepository
+      provide: ConstantTokens.TEAM_REPOSITORY,
+      useClass: TeamRepository
+    },
+    {
+      provide: ConstantTokens.MAIL_REPOSITORY,
+      useClass: MailRepository
     },
   ],
 })
