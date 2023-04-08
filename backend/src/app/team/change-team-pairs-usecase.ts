@@ -1,12 +1,12 @@
 import { Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id"
-import { PairId } from "src/domain/value-object/pair/pair-id"
 import { ITeamRepository } from "src/domain/interface/team/team-repository"
 import { TeamId } from "src/domain/value-object/team/team-id"
-import { TeamMemberSatisfySpecification } from "src/domain/specification/team-member-satisfy-specification"
 import { Team } from "src/domain/entity/team/team"
 import { IPairRepository } from "src/domain/interface/pair/pair-repository"
+import { ParticipantId } from "src/domain/value-object/participant/participant-id"
+import { PairIdsMapper } from "src/infra/mapper/pair-ids-mapper"
 
 export class ChangeTeamPairsUseCase {
   public constructor(
@@ -22,20 +22,25 @@ export class ChangeTeamPairsUseCase {
         throw new Error("対象のチームが存在しません。")
       }
       // ペアIDを作成
-      let newPairIds: PairId[] = []
-      params.newPairIds.map((pairId) => {
-        newPairIds.push(PairId.create(new UniqueEntityID(pairId)))
+      const newPairIds = PairIdsMapper.toEntity(params.newPairIds)
+      const newPairs = await this.pairRepo.getByIds(newPairIds)
+      if (newPairs.length == 0) {
+        throw new Error("対象のペアが存在しません。")
+      }
+      // ペアのすべての参加者IDを取得
+      let participantIds: ParticipantId[] = []
+      newPairs.map(newPair => {
+        newPair.participantIds.map((participantId) => {
+          participantIds.push(participantId)
+        })
       })
       // ペアを入れ替える
+      // NOTE: 元のペアが残ってしまう
       const newTeam = Team.create({
         name: team.name,
         pairIds: newPairIds,
+        participantIds: participantIds
       })
-      // 最低参加者数を満たしているか
-      const teamMemberSatisfySpecification = new TeamMemberSatisfySpecification(this.pairRepo)
-      if (!await teamMemberSatisfySpecification.isSatisfiedBy(newTeam)) {
-        throw new Error("チームの最低所属人数を満たしていません。")
-      }
       // チームを更新する
       await this.teamRepo.save(newTeam)
     } catch (error) {
