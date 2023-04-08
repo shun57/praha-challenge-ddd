@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/infra/db/prisma.service'
+import { CleanPrismaService, PrismaService } from 'src/infra/db/prisma.service'
 import { IParticipantRepository } from 'src/domain/interface/participant/participant-repository';
 import { Participant } from 'src/domain/entity/participant/participant';
 import { ParticipantEmail } from 'src/domain/value-object/participant/participant-email';
@@ -56,6 +56,18 @@ export class ParticipantRepository implements IParticipantRepository {
 
   public async save(participant: Participant): Promise<Participant> {
     await this.prisma.participant.create({
+      data: {
+        id: participant.participantId.id.toString(),
+        name: participant.name.value,
+        email: participant.email.value,
+        enrollmentStatus: participant.enrollmentStatus.value
+      },
+    })
+    return participant
+  }
+
+  public async saveInTransaction(participant: Participant, prisma: CleanPrismaService): Promise<Participant> {
+    await prisma.participant.create({
       data: {
         id: participant.participantId.id.toString(),
         name: participant.name.value,

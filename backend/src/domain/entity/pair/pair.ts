@@ -50,11 +50,11 @@ export class Pair extends Entity<PairProps> {
   }
 
   public isMaxParticipants(): boolean {
-    return this.props.participantIds.length === PAIR_UPPER_LIMIT
+    return this.numberOfParticipants() === PAIR_UPPER_LIMIT
   }
 
   public isMinParticipants(): boolean {
-    return this.props.participantIds.length === PAIR_LOWER_LIMIT
+    return this.numberOfParticipants() < PAIR_LOWER_LIMIT
   }
 
   public static isValidNumberOfParticipants(participantIds: ParticipantId[]): boolean {
