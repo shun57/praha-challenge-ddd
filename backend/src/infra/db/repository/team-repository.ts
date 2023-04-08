@@ -26,18 +26,24 @@ export class TeamRepository implements ITeamRepository {
       return null
     }
     // ペアメンバーを取得
-    return TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs })
+    const pairsMembers = team.pairs.map(pair => pair.pairMembers)
+    return TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs, pairsMembers: pairsMembers })
   }
 
   public async getAll(): Promise<Team[]> {
     const teams = await this.prisma.team.findMany({
       include: {
-        pairs: true
+        pairs: {
+          include: {
+            pairMembers: true
+          }
+        }
       }
     })
     let teamsEntity: Team[] = []
     teams.map((team) => {
-      teamsEntity.push(TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs }))
+      const pairsMembers = team.pairs.map(pair => pair.pairMembers)
+      teamsEntity.push(TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs, pairsMembers: pairsMembers }))
     })
     return teamsEntity
   }

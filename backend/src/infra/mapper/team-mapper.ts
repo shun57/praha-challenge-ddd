@@ -7,25 +7,26 @@ import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
 
 
 export class TeamMapper {
-  public static toEntity(param: { id: string, name: string, pairs: Pair[] }): Team {
-    const { id, name, pairs } = param
+  public static toEntity(param: { id: string, name: string, pairs: Pair[], pairsMembers: PairMember[][] }): Team {
+    const { id, name, pairs, pairsMembers } = param
     let pairIds: PairId[] = []
-    // let participantIds: ParticipantId[] = []
+    let participantIds: ParticipantId[] = []
 
+    // pairIds取得
     pairs.map((pair) => {
       pairIds.push(PairId.create(new UniqueEntityID(pair.id)))
     })
-    // ペアに含まれる全参加者を取得
-    // pairsMembers.map((pairMembers) => {
-    //   pairMembers.map((pairMember) => {
-    //     participantIds.push(ParticipantId.create(new UniqueEntityID(pairMember.participantId)))
-    //   })
-    // })
+    // participantIds取得
+    pairsMembers.map((pairMembers) => {
+      pairMembers.map((pairMember) => {
+        participantIds.push(ParticipantId.create(new UniqueEntityID(pairMember.participantId)))
+      })
+    })
 
     const TeamEntity = Team.create({
       name: PairName.create({ value: name }),
       pairIds: pairIds,
-      // participantIds: participantIds
+      participantIds: participantIds
     }, new UniqueEntityID(id))
 
     return TeamEntity
