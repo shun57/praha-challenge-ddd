@@ -7,6 +7,7 @@ import { TeamId } from 'src/domain/value-object/team/team-id';
 import { CleanPrismaService, PrismaService } from 'src/infra/db/prisma.service'
 import { PairIdsMapper } from 'src/infra/mapper/pair-ids-mapper';
 import { PairMapper } from 'src/infra/mapper/pair-mapper';
+import { ParticipantIdsMapper } from 'src/infra/mapper/participant-ids-mapper';
 import { UniqueEntityID } from 'src/shared/domain/unique-entity-id';
 
 @Injectable()
@@ -21,15 +22,20 @@ export class PairRepository implements IPairRepository {
             participant: true,
           },
         },
+        teamPairs: {
+          select: {
+            teamId: true,
+          },
+        },
       },
     })
     // ペアをエンティティに変換
     let pairsEntity: Pair[] = []
     pairs.map((pair) => {
+      const teamId = pair.teamPairs[0]?.teamId
       const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
-      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants }))
+      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: teamId, participants: participants }))
     })
-
     return pairsEntity
   }
 
@@ -44,14 +50,20 @@ export class PairRepository implements IPairRepository {
             participant: true,
           },
         },
+        teamPairs: {
+          select: {
+            teamId: true,
+          },
+        },
       },
     })
     if (!pair) {
       return null
     }
-    // 参加者を取得
+    // チームと参加者を取得
+    const teamId = pair.teamPairs[0]?.teamId
     const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
-    return PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants })
+    return PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: teamId, participants: participants })
   }
 
   public async getByIds(pairIds: PairId[]): Promise<Pair[]> {
@@ -70,13 +82,19 @@ export class PairRepository implements IPairRepository {
             participant: true,
           },
         },
+        teamPairs: {
+          select: {
+            teamId: true,
+          },
+        },
       },
     });
     // Entityに戻す
     let pairsEntity: Pair[] = []
-    pairs.map((pair) => {
+    pairs.forEach((pair) => {
+      const teamId = pair.teamPairs[0]?.teamId
       const participants = pair.pairMembers.map((pairMember) => pairMember.participant);
-      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants }))
+      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: teamId, participants: participants }))
     })
     return pairsEntity
   }
@@ -84,7 +102,11 @@ export class PairRepository implements IPairRepository {
   public async getByTeamId(teamId: TeamId): Promise<Pair[]> {
     const pairs = await this.prisma.pair.findMany({
       where: {
-        id: teamId.id.toString(),
+        teamPairs: {
+          some: {
+            teamId: teamId.id.toString(),
+          }
+        }
       },
       include: {
         pairMembers: {
@@ -92,13 +114,19 @@ export class PairRepository implements IPairRepository {
             participant: true,
           },
         },
+        teamPairs: {
+          select: {
+            teamId: true,
+          },
+        },
       },
     })
     // ペアをエンティティに変換
     let pairsEntity: Pair[] = []
-    pairs.map((pair) => {
+    pairs.forEach((pair) => {
+      const teamId = pair.teamPairs[0]?.teamId
       const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
-      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants }))
+      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: teamId, participants: participants }))
     })
     return pairsEntity
   }
@@ -119,21 +147,24 @@ export class PairRepository implements IPairRepository {
             participant: true,
           },
         },
+        teamPairs: {
+          select: {
+            teamId: true,
+          },
+        },
       },
     })
     if (!pair) {
       return null
     }
+    const teamId = pair.teamPairs[0]?.teamId
     const participants = pair.pairMembers.map((pairMember) => pairMember.participant)
-    return PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants })
+    return PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: teamId, participants: participants })
   }
 
   public async getByParticipantIds(participantIds: ParticipantId[]): Promise<Pair[]> {
     // 参加者IDを文字列化
-    let participantIdsStr: string[] = []
-    participantIds.map((participantId) => {
-      participantIdsStr.push(participantId.id.toString())
-    })
+    const participantIdsStr = ParticipantIdsMapper.toData(participantIds)
     // 参加者のペアを取得
     const pairs = await this.prisma.pair.findMany({
       where: {
@@ -151,13 +182,19 @@ export class PairRepository implements IPairRepository {
             participant: true,
           },
         },
+        teamPairs: {
+          select: {
+            teamId: true,
+          },
+        },
       },
     });
     // Entityに戻す
     let pairsEntity: Pair[] = []
-    pairs.map((pair) => {
+    pairs.forEach((pair) => {
+      const teamId = pair.teamPairs[0]?.teamId
       const participants = pair.pairMembers.map((pairMember) => pairMember.participant);
-      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: pair.teamId, participants: participants }))
+      pairsEntity.push(PairMapper.toEntity({ id: pair.id, name: pair.name, teamId: teamId, participants: participants }))
     })
     return pairsEntity
   }
@@ -186,7 +223,6 @@ export class PairRepository implements IPairRepository {
         create: {
           id: id,
           name: name,
-          teamId: teamId,
         },
         update: {
           name: name
@@ -219,7 +255,6 @@ export class PairRepository implements IPairRepository {
       create: {
         id: id,
         name: name,
-        teamId: teamId,
       },
       update: {
         name: name

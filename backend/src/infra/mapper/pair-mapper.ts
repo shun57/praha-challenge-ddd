@@ -7,7 +7,7 @@ import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
 
 
 export class PairMapper {
-  public static toEntity(param: { id: string, name: string, teamId: string, participants: Participant[] }): Pair {
+  public static toEntity(param: { id: string, name: string, teamId?: string, participants: Participant[] }): Pair {
     const { id, name, teamId, participants } = param
     let participantIds: ParticipantId[] = []
 

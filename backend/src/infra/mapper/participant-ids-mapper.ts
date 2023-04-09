@@ -4,10 +4,16 @@ import { UniqueEntityID } from "src/shared/domain/unique-entity-id"
 
 export class ParticipantIdsMapper {
   public static toEntity(participantIds: string[]): ParticipantId[] {
-    let participantIdsEntity: ParticipantId[] = []
-    participantIds.map((participantId) => {
-      participantIdsEntity.push(ParticipantId.create(new UniqueEntityID(participantId)))
+    const participantIdsEntity = participantIds.map((participantId) => {
+      return ParticipantId.create(new UniqueEntityID(participantId))
     })
     return participantIdsEntity
+  }
+
+  public static toData(participantIds: ParticipantId[]): string[] {
+    const participantIdsStr = participantIds.map((participantId) => {
+      return participantId.id.toString()
+    })
+    return participantIdsStr
   }
 }

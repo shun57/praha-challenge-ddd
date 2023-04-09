@@ -24,9 +24,6 @@ export class ChangeTeamPairsUseCase {
       // ペアIDを作成
       const newPairIds = PairIdsMapper.toEntity(params.newPairIds)
       const newPairs = await this.pairRepo.getByIds(newPairIds)
-      if (newPairs.length == 0) {
-        throw new Error("対象のペアが存在しません。")
-      }
       // ペアのすべての参加者IDを取得
       let participantIds: ParticipantId[] = []
       newPairs.map(newPair => {
@@ -35,7 +32,6 @@ export class ChangeTeamPairsUseCase {
         })
       })
       // ペアを入れ替える
-      // NOTE: 元のペアが残ってしまう
       const newTeam = Team.create({
         name: team.name,
         pairIds: newPairIds,

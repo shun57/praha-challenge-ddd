@@ -15,35 +15,33 @@ export class TeamRepository implements ITeamRepository {
         id: teamId.id.toString(),
       },
       include: {
-        pairs: {
-          include: {
-            pairMembers: true
-          }
-        }
+        teamPairs: {
+          include: { pair: { include: { pairMembers: true } } },
+        },
       },
     })
     if (!team) {
       return null
     }
-    // ペアメンバーを取得
-    const pairsMembers = team.pairs.map(pair => pair.pairMembers)
-    return TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs, pairsMembers: pairsMembers })
+    // ペアを取得
+    const pairs = team.teamPairs.map((teamPair) => teamPair.pair)
+    const pairsMembers = team.teamPairs.map((teamPair) => teamPair.pair.pairMembers)
+    return TeamMapper.toEntity({ id: team.id, name: team.name, pairs: pairs, pairsMembers: pairsMembers })
   }
 
   public async getAll(): Promise<Team[]> {
     const teams = await this.prisma.team.findMany({
       include: {
-        pairs: {
-          include: {
-            pairMembers: true
-          }
-        }
-      }
+        teamPairs: {
+          include: { pair: { include: { pairMembers: true } } },
+        },
+      },
     })
     let teamsEntity: Team[] = []
     teams.map((team) => {
-      const pairsMembers = team.pairs.map(pair => pair.pairMembers)
-      teamsEntity.push(TeamMapper.toEntity({ id: team.id, name: team.name, pairs: team.pairs, pairsMembers: pairsMembers }))
+      const pairs = team.teamPairs.map((teamPair) => teamPair.pair)
+      const pairsMembers = team.teamPairs.map(teamPair => teamPair.pair.pairMembers)
+      teamsEntity.push(TeamMapper.toEntity({ id: team.id, name: team.name, pairs: pairs, pairsMembers: pairsMembers }))
     })
     return teamsEntity
   }
@@ -64,12 +62,19 @@ export class TeamRepository implements ITeamRepository {
           name: name
         }
       })
-      // ペアのチームを更新
-      await this.prisma.pair.updateMany({
-        where: { id: { in: pairIds } },
-        data: {
-          teamId: id
-        }
+      // team所属ペアを全削除
+      await prisma.teamPair.deleteMany({
+        where: {
+          teamId: id,
+        },
+      })
+      // team所属ペアを作成
+      const teamPairs = pairIds.map(pairId => ({
+        teamId: id,
+        pairId
+      }))
+      await this.prisma.teamPair.createMany({
+        data: teamPairs
       })
       return team
     })
