@@ -13,8 +13,8 @@ export class PairService {
     this.pairRepo = pairRepo
   }
 
-  public async isSameTeamBy(pair: Pair): Promise<boolean> {
-    const pairs = await this.pairRepo.getByParticipantIds(pair.participantIds)
+  public async isSameTeamBy(participantIds: ParticipantId[]): Promise<boolean> {
+    const pairs = await this.pairRepo.getByParticipantIds(participantIds)
     if (pairs.length === 0) {
       throw new Error("対象参加者がペアに所属していません。")
     }
@@ -35,26 +35,21 @@ export class PairService {
     return minNumberOfMemberPair[Math.floor(Math.random() * minNumberOfMemberPair.length)]
   }
 
-  public async devidePairIfOverMember(pair: Pair, participantId: ParticipantId, prisma: CleanPrismaService): Promise<Pair | null> {
-    // ペアが最大人数だった場合、新しいペアを作る
-    if (pair.isMaxParticipants()) {
-      // ペアからランダムに1人減らす
-      const removeParticipantId = pair.participantIds[Math.floor(Math.random() * pair.participantIds.length)]
-      pair.remove(removeParticipantId!)
-      await this.pairRepo.saveInTransaction(pair, prisma)
-      // 新しいペアを作る
-      const pairs = await this.pairRepo.getAll()
-      // ペアの名前が被らないようにする
-      const newPairName = this.getRandomPairNameNotIn(pairs)
-      const newPair = Pair.create({
-        name: newPairName,
-        teamId: pair.teamId,
-        participantIds: [removeParticipantId!, participantId]
-      })
-      await this.pairRepo.saveInTransaction(newPair, prisma)
-      return newPair
-    }
-    return null
+  public async devidePairIfOverMember(pair: Pair, participantId: ParticipantId, prisma: CleanPrismaService): Promise<void> {
+    // ペアからランダムに1人減らす
+    const removeParticipantId = pair.participantIds[Math.floor(Math.random() * pair.participantIds.length)]
+    pair.remove(removeParticipantId!)
+    await this.pairRepo.saveInTransaction(pair, prisma)
+    // 新しいペアを作る
+    const pairs = await this.pairRepo.getAll()
+    // ペアの名前が被らないようにする
+    const newPairName = this.getRandomPairNameNotIn(pairs)
+    const newPair = Pair.create({
+      name: newPairName,
+      teamId: pair.teamId,
+      participantIds: [removeParticipantId!, participantId]
+    })
+    await this.pairRepo.saveInTransaction(newPair, prisma)
   }
 
   private getRandomPairNameNotIn(pairs: Pair[]): PairName {
