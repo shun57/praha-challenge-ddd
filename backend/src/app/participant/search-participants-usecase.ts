@@ -14,13 +14,12 @@ export class SearchParticipantsUseCase {
   public async do(params: { challengeIds: string[], progress: string, pageNumber: number }) {
     const { challengeIds, progress, pageNumber } = params
 
-    let challengeIdsEntity: ChallengeId[] = []
     const limit = 10
     const offset = limit * (pageNumber - 1)
 
     try {
-      challengeIds.map((challengeId) => {
-        challengeIdsEntity.push(ChallengeId.create(new UniqueEntityID(challengeId)))
+      const challengeIdsEntity = challengeIds.map((challengeId) => {
+        return ChallengeId.create(new UniqueEntityID(challengeId))
       })
       const progressEntity = ParticipantChallengeProgress.create({ value: progress })
       return await this.participantQS.findByChallengesAndProgress(challengeIdsEntity, progressEntity, limit, offset)
