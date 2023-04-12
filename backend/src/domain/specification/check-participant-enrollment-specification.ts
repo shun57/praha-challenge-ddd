@@ -11,6 +11,9 @@ export class CheckParticipantEnrollmentSpecification {
 
   public async isEnrolledIn(participantIds: ParticipantId[]): Promise<boolean> {
     const participants = await this.participantRepo.getByIds(participantIds)
+    if (!participants) {
+      return false
+    }
     return participants.every((participant) => participant.enrollmentStatus.isEnrolled())
   }
 }

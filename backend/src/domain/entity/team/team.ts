@@ -53,11 +53,11 @@ export class Team extends Entity<TeamProps> {
   }
 
   public static isSatisfiedBy(participantIds: ParticipantId[]) {
-    return participantIds.length < TEAM_LOWER_LIMIT
+    return participantIds.length >= TEAM_LOWER_LIMIT
   }
 
   public static create(props: TeamProps, id?: UniqueEntityID): Team {
-    if (this.isSatisfiedBy(props.participantIds)) {
+    if (!this.isSatisfiedBy(props.participantIds)) {
       throw new Error("チームメンバーが足りていません")
     }
     const team = new Team({ ...props }, id)
