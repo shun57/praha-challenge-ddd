@@ -48,8 +48,13 @@ export class Team extends Entity<TeamProps> {
     this.props.pairIds.splice(index, 1)
   }
 
+  public removeParticipant(participantId: ParticipantId): void {
+    const index = this.props.participantIds.indexOf(participantId);
+    this.props.participantIds.splice(index, 1)
+  }
+
   public isMinParticipants(): boolean {
-    return this.numberOfParticipants() === TEAM_LOWER_LIMIT
+    return this.numberOfParticipants() < TEAM_LOWER_LIMIT
   }
 
   public static isSatisfiedBy(participantIds: ParticipantId[]) {

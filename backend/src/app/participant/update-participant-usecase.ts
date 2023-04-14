@@ -70,7 +70,7 @@ export class UpdateParticipantUseCase {
           }
           const secessionMemberSpecification = new SecessionMemberSpecification(this.teamRepo, this.pairRepo, this.participantRepo, this.mailRepo)
           // チームの参加者数が条件を満たさなくなった場合、アラートメールを送る
-          if (!currentPairTeam.isMinParticipants()) {
+          if (currentPairTeam.isMinParticipants()) {
             secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(participant, currentPairTeam)
           }
           // 脱退したことでペアの参加者数が条件を満たさない場合、残りのペアメンバーを移動する

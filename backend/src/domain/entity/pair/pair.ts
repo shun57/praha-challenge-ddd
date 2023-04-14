@@ -40,8 +40,8 @@ export class Pair extends Entity<PairProps> {
     this.props.participantIds.push(participantId)
   }
 
-  public remove(participantIds: ParticipantId): void {
-    const index = this.props.participantIds.indexOf(participantIds);
+  public remove(participantId: ParticipantId): void {
+    const index = this.props.participantIds.indexOf(participantId);
     this.props.participantIds.splice(index, 1)
   }
 
