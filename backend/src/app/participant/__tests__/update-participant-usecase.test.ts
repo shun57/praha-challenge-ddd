@@ -199,7 +199,7 @@ describe('do', () => {
       pairIds: [PairId.create(new UniqueEntityID())],
       participantIds: [ParticipantId.create(new UniqueEntityID("1")), ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID())]
     })
-    minTeam.removeParticipant(ParticipantId.create(new UniqueEntityID("1")));
+    minTeam.participantIds.splice(0, 1)
 
     jest.spyOn(participantRepo, 'getById').mockResolvedValueOnce(enrolledParticipant);
     jest.spyOn(pairRepo, 'getByParticipantId').mockResolvedValueOnce(maxPair);
@@ -228,7 +228,7 @@ describe('do', () => {
       pairIds: [PairId.create(new UniqueEntityID())],
       participantIds: [ParticipantId.create(new UniqueEntityID("1")), ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID())]
     });
-    minTeam.removeParticipant(ParticipantId.create(new UniqueEntityID("1")));
+    minTeam.participantIds.splice(0, 1)
 
     jest.spyOn(participantRepo, 'getById').mockResolvedValueOnce(enrolledParticipant);
     jest.spyOn(pairRepo, 'getByParticipantId').mockResolvedValueOnce(minPair);

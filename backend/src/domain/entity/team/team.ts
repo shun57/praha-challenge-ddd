@@ -43,16 +43,6 @@ export class Team extends Entity<TeamProps> {
     this.props.pairIds = newPairIds
   }
 
-  public removePair(pairId: PairId): void {
-    const index = this.props.pairIds.indexOf(pairId);
-    this.props.pairIds.splice(index, 1)
-  }
-
-  public removeParticipant(participantId: ParticipantId): void {
-    const index = this.props.participantIds.indexOf(participantId);
-    this.props.participantIds.splice(index, 1)
-  }
-
   public isMinParticipants(): boolean {
     return this.numberOfParticipants() < TEAM_LOWER_LIMIT
   }
@@ -63,7 +53,7 @@ export class Team extends Entity<TeamProps> {
 
   public static create(props: TeamProps, id?: UniqueEntityID): Team {
     if (!this.isSatisfiedBy(props.participantIds)) {
-      throw new Error("チームメンバーが足りていません")
+      throw new Error("チームメンバーが足りていません。")
     }
     const team = new Team({ ...props }, id)
     return team
