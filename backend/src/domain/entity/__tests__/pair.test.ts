@@ -1,8 +1,8 @@
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
-import { Pair } from "../entity/pair/pair";
-import { PairName } from "../value-object/pair/pair-name";
-import { ParticipantId } from "../value-object/participant/participant-id";
-import { TeamId } from "../value-object/team/team-id";
+import { Pair } from "../pair/pair";
+import { PairName } from "../../value-object/pair/pair-name";
+import { ParticipantId } from "../../value-object/participant/participant-id";
+import { TeamId } from "../../value-object/team/team-id";
 
 
 describe('ペアエンティティ', (): void => {

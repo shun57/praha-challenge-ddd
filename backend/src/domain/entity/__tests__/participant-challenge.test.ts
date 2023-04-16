@@ -1,8 +1,8 @@
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
-import { ParticipantId } from "../value-object/participant/participant-id";
-import { ParticipantChallenge } from "../entity/participant/participant-challenge";
-import { ChallengeId } from "../value-object/challenge/challenge-id";
-import { ParticipantChallengeProgress, ProgressType } from "../value-object/participant/participant-challenge-progress";
+import { ParticipantId } from "../../value-object/participant/participant-id";
+import { ParticipantChallenge } from "../participant/participant-challenge";
+import { ChallengeId } from "../../value-object/challenge/challenge-id";
+import { ParticipantChallengeProgress, ProgressType } from "../../value-object/participant/participant-challenge-progress";
 
 
 describe('参加者所有課題', (): void => {

@@ -1,8 +1,8 @@
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
-import { Participant } from "../entity/participant/participant";
-import { ParticipantName } from "../value-object/participant/participant-name";
-import { ParticipantEmail } from "../value-object/participant/participant-email";
-import { EnrollmentStatusType, ParticipantEnrollmentStatus } from "../value-object/participant/participant-enrollment-status";
+import { Participant } from "../participant/participant";
+import { ParticipantName } from "../../value-object/participant/participant-name";
+import { ParticipantEmail } from "../../value-object/participant/participant-email";
+import { EnrollmentStatusType, ParticipantEnrollmentStatus } from "../../value-object/participant/participant-enrollment-status";
 
 
 describe('参加者エンティティ', (): void => {
