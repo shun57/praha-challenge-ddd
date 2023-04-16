@@ -24,8 +24,6 @@ describe('参加者エンティティ', (): void => {
         expect(participant.enrollmentStatus).toBe(enrollmentStatus)
     });
 
-    ;
-
     test('参加者の在籍ステータスを更新する:updateEnrollmentStatus()', () => {
         const participant = Participant.create({
             name: name,
