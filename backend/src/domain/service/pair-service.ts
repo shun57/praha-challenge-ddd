@@ -1,4 +1,3 @@
-
 import { Pair } from "src/domain/entity/pair/pair";
 import { CleanPrismaService } from "src/infra/db/prisma.service";
 import { Team } from "../entity/team/team";
@@ -23,6 +22,9 @@ export class PairService {
 
   public async getMinimumPairBy(team: Team): Promise<Pair | undefined> {
     const pairs = await this.pairRepo.getByTeamId(team.teamId)
+    if (pairs.length === 0) {
+      return undefined
+    }
     // 最少人数を取得
     const minNumberOfPeople = pairs.reduce(
       (min, pair) =>
@@ -41,25 +43,11 @@ export class PairService {
     pair.remove(removeParticipantId!)
     await this.pairRepo.saveInTransaction(pair, prisma)
     // 新しいペアを作る
-    const pairs = await this.pairRepo.getAll()
-    // ペアの名前が被らないようにする
-    const newPairName = this.getRandomPairNameNotIn(pairs)
     const newPair = Pair.create({
-      name: newPairName,
+      name: PairName.createRandomName(),
       teamId: pair.teamId,
       participantIds: [removeParticipantId!, participantId]
     })
     await this.pairRepo.saveInTransaction(newPair, prisma)
-  }
-
-  private getRandomPairNameNotIn(pairs: Pair[]): PairName {
-    let randomPairName: string;
-    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-    do {
-      randomPairName = alphabet[Math.floor(Math.random() * alphabet.length)]!;
-    } while (pairs.some(pair => {
-      return pair.name.value !== randomPairName
-    }));
-    return PairName.create({ value: randomPairName });
   }
 }

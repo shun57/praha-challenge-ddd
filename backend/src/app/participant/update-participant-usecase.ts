@@ -68,7 +68,7 @@ export class UpdateParticipantUseCase {
           if (!currentPairTeam) {
             throw new Error("チームがありませんでした。")
           }
-          const secessionMemberSpecification = new SecessionMemberSpecification(this.teamRepo, this.pairRepo, this.participantRepo, this.mailRepo)
+          const secessionMemberSpecification = new SecessionMemberSpecification(this.pairRepo, this.participantRepo, this.mailRepo)
           // チームの参加者数が条件を満たさなくなった場合、アラートメールを送る
           if (currentPairTeam.isMinParticipants()) {
             secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(participant, currentPairTeam)

@@ -16,6 +16,12 @@ export class PairName extends ValueObject<PairNameProps> {
     super(props);
   }
 
+  public static createRandomName(): PairName {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    const randomPairName = alphabet[Math.floor(Math.random() * alphabet.length)]!;
+    return PairName.create({ value: randomPairName });
+  }
+
   private static isAlphabet(name: string) {
     var re = /^[a-zA-Z]+$/;
     return re.test(name);

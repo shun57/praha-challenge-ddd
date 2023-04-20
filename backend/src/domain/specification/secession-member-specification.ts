@@ -7,21 +7,17 @@ import { TeamMemberNotSatisfiedNotifyMail } from "../entity/team/team-member-not
 import { IMailRepository } from "../interface/mail/mail-repository";
 import { IPairRepository } from "../interface/pair/pair-repository";
 import { IParticipantRepository } from "../interface/participant/participant-repository";
-import { ITeamRepository } from "../interface/team/team-repository";
 import { PairService } from "../service/pair-service";
 
 export class SecessionMemberSpecification {
-  private teamRepo: ITeamRepository
   private pairRepo: IPairRepository
   private participantRepo: IParticipantRepository
   private mailRepo: IMailRepository
   public constructor(
-    teamRepo: ITeamRepository,
     pairRepo: IPairRepository,
     participantRepo: IParticipantRepository,
     mailRepo: IMailRepository
   ) {
-    this.teamRepo = teamRepo
     this.pairRepo = pairRepo
     this.participantRepo = participantRepo
     this.mailRepo = mailRepo
@@ -37,7 +33,7 @@ export class SecessionMemberSpecification {
   }
 
   public async moveAnotherMinPairIfPairMemberNotFilled(currentPairTeam: Team, currentPair: Pair, participant: Participant, pairService: PairService, prisma: CleanPrismaService): Promise<void> {
-    // 他の一番人数の少ないペアを取得
+    // 一番人数の少ないペアを取得
     const minPair = await pairService.getMinimumPairBy(currentPairTeam)
     // ペアの残りメンバーを取得
     const pairMembers = currentPair.participantIds.filter((participantId) => participantId !== participant.participantId)

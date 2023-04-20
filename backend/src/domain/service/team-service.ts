@@ -10,6 +10,9 @@ export class TeamService {
 
   public async getMinimumTeam(): Promise<Team | undefined> {
     const teams = await this.teamRepo.getAll()
+    if (teams.length === 0) {
+      return undefined
+    }
     // 最少人数のチームを取得
     const minNumberOfPeople = teams.reduce(
       (min, team) =>
