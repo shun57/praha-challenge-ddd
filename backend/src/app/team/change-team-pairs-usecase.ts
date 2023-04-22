@@ -36,7 +36,7 @@ export class ChangeTeamPairsUseCase {
         name: team.name,
         pairIds: newPairIds,
         participantIds: participantIds
-      })
+      }, team.teamId.id)
       // チームを更新する
       await this.teamRepo.save(newTeam)
     } catch (error) {

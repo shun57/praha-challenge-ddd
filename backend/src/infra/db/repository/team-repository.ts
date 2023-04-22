@@ -68,6 +68,11 @@ export class TeamRepository implements ITeamRepository {
           teamId: id,
         },
       })
+      await prisma.teamPair.deleteMany({
+        where: {
+          pairId: { in: pairIds },
+        },
+      })
       // team所属ペアを作成
       const teamPairs = pairIds.map(pairId => ({
         teamId: id,

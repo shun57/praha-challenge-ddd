@@ -26,8 +26,8 @@ export class PairMapper {
 
   public static toData(pair: Pair): { id: string, name: string, teamId: string, participantIds: string[] } {
     let participantIds: string[] = []
-    participantIds.map((participantId) => {
-      participantIds.push(participantId)
+    pair.participantIds.map((participantId) => {
+      participantIds.push(participantId.id.toString())
     })
     return {
       id: pair.pairId.id.toString(),

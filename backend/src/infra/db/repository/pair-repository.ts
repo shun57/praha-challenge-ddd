@@ -206,6 +206,9 @@ export class PairRepository implements IPairRepository {
       await prisma.pairMember.deleteMany({
         where: { pairId: id },
       });
+      await prisma.pairMember.deleteMany({
+        where: { participantId: { in: participantIds } },
+      });
       // ペアに新しいメンバーを追加
       const newMembers = participantIds.map((participantId) => ({
         id: new UniqueEntityID().toString(),
