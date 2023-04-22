@@ -39,6 +39,13 @@ export class Team extends Entity<TeamProps> {
     return this.props.participantIds.length
   }
 
+  public removeParticipant(participantId: ParticipantId): void {
+    const updatedParticipant = this.props.participantIds.filter((pid) => {
+      return !pid.equals(participantId)
+    });
+    this.props.participantIds = updatedParticipant
+  }
+
   public changePairs(newPairIds: PairId[]) {
     this.props.pairIds = newPairIds
   }

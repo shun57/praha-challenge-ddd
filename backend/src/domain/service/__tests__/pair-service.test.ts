@@ -62,6 +62,7 @@ describe("PairService", () => {
       saveInTransaction: jest.fn(),
       getById: jest.fn(),
       getByIds: jest.fn(),
+      deleteInTransaction: jest.fn()
     };
     pairService = new PairService(mockPairRepo);
   });

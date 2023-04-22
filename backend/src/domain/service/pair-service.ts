@@ -20,10 +20,17 @@ export class PairService {
     return pairs.every((pair) => pair.teamId == pairs[0]?.teamId)
   }
 
-  public async getMinimumPairBy(team: Team): Promise<Pair | undefined> {
-    const pairs = await this.pairRepo.getByTeamId(team.teamId)
+  public async getMinimumPairBy(team: Team, filterPair: Pair | undefined = undefined): Promise<Pair | undefined> {
+    let pairs = await this.pairRepo.getByTeamId(team.teamId)
     if (pairs.length === 0) {
       return undefined
+    }
+    // ペアが渡された場合は対象ペアを抜く
+    if (filterPair != undefined) {
+      const updatedParticipant = pairs.filter((pair) => {
+        return !pair.equals(filterPair)
+      });
+      pairs = updatedParticipant
     }
     // 最少人数を取得
     const minNumberOfPeople = pairs.reduce(
@@ -41,13 +48,14 @@ export class PairService {
     // ペアからランダムに1人減らす
     const removeParticipantId = pair.participantIds[Math.floor(Math.random() * pair.participantIds.length)]
     pair.remove(removeParticipantId!)
-    await this.pairRepo.saveInTransaction(pair, prisma)
     // 新しいペアを作る
     const newPair = Pair.create({
       name: PairName.createRandomName(),
       teamId: pair.teamId,
       participantIds: [removeParticipantId!, participantId]
     })
+
+    await this.pairRepo.saveInTransaction(pair, prisma)
     await this.pairRepo.saveInTransaction(newPair, prisma)
   }
 }

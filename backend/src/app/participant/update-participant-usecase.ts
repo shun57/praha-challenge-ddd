@@ -32,57 +32,74 @@ export class UpdateParticipantUseCase {
         throw new Error("対象の会員が存在しません。")
       }
 
-      await this.prisma.$transaction(async (prisma) => {
-        const pairService = new PairService(this.pairRepo)
+      const pairService = new PairService(this.pairRepo)
 
-        // 参加者が増減する場合、復帰・脱退処理を行う
-        if (participant.isComeback(newEnrollmentStatus)) {
-          // 復帰処理
-          const teamService = new TeamService(this.teamRepo)
-          // 最少人数のチームを取得
-          const minTeam = await teamService.getMinimumTeam()
-          if (!minTeam) {
-            throw new Error("最少人数のチームがありませんでした。")
-          }
-          // 最少人数のペアを取得
-          const minPair = await pairService.getMinimumPairBy(minTeam)
-          if (!minPair) {
-            throw new Error("最少人数のペアがありませんでした。")
-          }
+      // 参加者が増減する場合、復帰・脱退処理を行う
+      if (participant.isComeback(newEnrollmentStatus)) {
+        // 復帰処理
+        const teamService = new TeamService(this.teamRepo)
+        // 最少人数のチームを取得
+        const minTeam = await teamService.getMinimumTeam()
+        if (!minTeam) {
+          throw new Error("最少人数のチームがありませんでした。")
+        }
+        // 最少人数のペアを取得
+        const minPair = await pairService.getMinimumPairBy(minTeam)
+        if (!minPair) {
+          throw new Error("最少人数のペアがありませんでした。")
+        }
+        await this.prisma.$transaction(async (prisma) => {
           // ペアが最大人数を超えた場合、分解して保存
           if (minPair.isMaxParticipants()) {
             await pairService.devidePairIfOverMember(minPair, participant.participantId, prisma)
+          } else {
+            minPair.join(participant.participantId)
+            this.pairRepo.saveInTransaction(minPair, prisma)
           }
+          // 参加者の在籍ステータスを更新して保存
+          participant.updateEnrollmentStatus(newEnrollmentStatus)
+          await this.participantRepo.saveInTransaction(participant, prisma)
+        })
 
-        } else if (participant.isSecession(newEnrollmentStatus)) {
-          // 脱退処理
-          const currentPair = await this.pairRepo.getByParticipantId(participant.participantId)
-          if (!currentPair) {
-            throw new Error("脱退対象のペアがありませんでした。")
-          }
-          // ペアから参加者を減らす
-          currentPair.remove(participant.participantId)
+      } else if (participant.isSecession(newEnrollmentStatus)) {
+        // 脱退処理
+        const currentPair = await this.pairRepo.getByParticipantId(participant.participantId)
+        if (!currentPair) {
+          throw new Error("脱退対象のペアがありませんでした。")
+        }
+        // 現在のチームを取得
+        const currentPairTeam = await this.teamRepo.getById(currentPair.teamId)
+        if (!currentPairTeam) {
+          throw new Error("チームがありませんでした。")
+        }
+        // ペアから参加者を減らす
+        currentPair.remove(participant.participantId)
+        currentPairTeam.removeParticipant(participant.participantId)
+        // チームの参加者を取得
+        const secessionMemberSpecification = new SecessionMemberSpecification(this.pairRepo, this.participantRepo, this.mailRepo)
+        // 現所属チーム以外の一番人数の少ないペアを取得
+        const minPair = await pairService.getMinimumPairBy(currentPairTeam, currentPair)
+        if (!minPair) {
+          throw new Error("最少人数のペアがありませんでした。")
+        }
+        // チームの参加者数が条件を満たさなくなった場合、アラートメールを送る
+        if (currentPairTeam.isMinParticipants()) {
+          const teamMembers = await this.participantRepo.getByIds(currentPairTeam.participantIds)
+          secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(participant, currentPairTeam, teamMembers)
+        }
+        await this.prisma.$transaction(async (prisma) => {
+          // ペアから抜く
           await this.pairRepo.saveInTransaction(currentPair, prisma)
-          // 現在のチームを取得
-          const currentPairTeam = await this.teamRepo.getById(currentPair.teamId)
-          if (!currentPairTeam) {
-            throw new Error("チームがありませんでした。")
-          }
-          const secessionMemberSpecification = new SecessionMemberSpecification(this.pairRepo, this.participantRepo, this.mailRepo)
-          // チームの参加者数が条件を満たさなくなった場合、アラートメールを送る
-          if (currentPairTeam.isMinParticipants()) {
-            secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(participant, currentPairTeam)
-          }
           // 脱退したことでペアの参加者数が条件を満たさない場合、残りのペアメンバーを移動する
           if (currentPair.isMinParticipants()) {
-            await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(currentPairTeam, currentPair, participant, pairService, prisma)
+            await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(minPair, currentPair, participant, prisma)
           }
+          // 参加者の在籍ステータスを更新して保存
+          participant.updateEnrollmentStatus(newEnrollmentStatus)
+          await this.participantRepo.saveInTransaction(participant, prisma)
+        })
 
-        }
-        // 参加者の在籍ステータスを更新して保存
-        participant.updateEnrollmentStatus(newEnrollmentStatus)
-        await this.participantRepo.saveInTransaction(participant, prisma)
-      })
+      }
     } catch (error) {
       throw error
     }

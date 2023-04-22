@@ -41,8 +41,10 @@ export class Pair extends Entity<PairProps> {
   }
 
   public remove(participantId: ParticipantId): void {
-    const index = this.props.participantIds.indexOf(participantId);
-    this.props.participantIds.splice(index, 1)
+    const updatedParticipant = this.props.participantIds.filter((pid) => {
+      return !pid.equals(participantId)
+    });
+    this.props.participantIds = updatedParticipant
   }
 
   public numberOfParticipants(): number {

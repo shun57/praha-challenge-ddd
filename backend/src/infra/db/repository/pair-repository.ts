@@ -237,21 +237,8 @@ export class PairRepository implements IPairRepository {
 
   public async saveInTransaction(pair: Pair, prisma: CleanPrismaService): Promise<Pair> {
     const { id, name, teamId, participantIds } = PairMapper.toData(pair)
-    // 既存ペアのメンバーの削除
-    await prisma.pairMember.deleteMany({
-      where: { pairId: id },
-    });
-    // ペアに新しいメンバーを追加
-    const newMembers = participantIds.map((participantId) => ({
-      id: new UniqueEntityID().toString(),
-      pairId: id,
-      participantId: participantId,
-    }))
-    await prisma.pairMember.createMany({
-      data: newMembers,
-    })
     // ペアの作成or更新
-    await prisma.pair.upsert({
+    const upsertPair = prisma.pair.upsert({
       where: {
         id: id
       },
@@ -263,6 +250,38 @@ export class PairRepository implements IPairRepository {
         name: name
       }
     })
+    // 既存ペアのメンバーの削除
+    const deleteMembers = prisma.pairMember.deleteMany({
+      where: { pairId: id },
+    });
+    // ペアに新しいメンバーを追加
+    const newMembers = participantIds.map((participantId) => ({
+      id: new UniqueEntityID().toString(),
+      pairId: id,
+      participantId: participantId,
+    }))
+    const createMembers = prisma.pairMember.createMany({
+      data: newMembers,
+    })
+
+    await Promise.all([upsertPair, deleteMembers, createMembers]);
+
     return pair
+  }
+
+  public async deleteInTransaction(pair: Pair, prisma: CleanPrismaService): Promise<void> {
+    const deleteMembers = prisma.pairMember.deleteMany({
+      where: { pairId: pair.pairId.id.toString() },
+    });
+    const deleteTeamPairs = prisma.teamPair.deleteMany({
+      where: { pairId: pair.pairId.id.toString() },
+    });
+    const deletePair = prisma.pair.delete({
+      where: {
+        id: pair.pairId.id.toString(),
+      },
+    });
+
+    await Promise.all([deleteMembers, deleteTeamPairs, deletePair]);
   }
 }

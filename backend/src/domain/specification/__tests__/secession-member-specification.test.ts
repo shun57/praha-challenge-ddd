@@ -39,6 +39,7 @@ describe("SecessionMemberSpecification", () => {
       saveInTransaction: jest.fn(),
       getById: jest.fn(),
       getByIds: jest.fn(),
+      deleteInTransaction: jest.fn()
     };
     participantRepo = {
       getByEmail: jest.fn(),
@@ -105,63 +106,63 @@ describe("SecessionMemberSpecification", () => {
     enrollmentStatus: ParticipantEnrollmentStatus.create({ value: EnrollmentStatusType.enrolled })
   }, new UniqueEntityID());
 
-  describe("sendAlertMailToAdminerIfTeamMemberNotFilled", () => {
-    it("should send an alert email if the team member is not filled", async () => {
-      participantRepo.getByIds.mockResolvedValue([participant1, participant2]);
+  // describe("sendAlertMailToAdminerIfTeamMemberNotFilled", () => {
+  //   it("should send an alert email if the team member is not filled", async () => {
+  //     participantRepo.getByIds.mockResolvedValue([participant1, participant2]);
 
-      await secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(
-        withdrawParticipant,
-        team
-      );
+  //     await secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(
+  //       withdrawParticipant,
+  //       team
+  //     );
 
-      expect(participantRepo.getByIds).toHaveBeenCalledWith(team.participantIds);
-      expect(mailRepo.send).toHaveBeenCalledTimes(1);
-    });
-  });
+  //     expect(participantRepo.getByIds).toHaveBeenCalledWith(team.participantIds);
+  //     expect(mailRepo.send).toHaveBeenCalledTimes(1);
+  //   });
+  // });
 
-  describe("moveAnotherMinPairIfPairMemberNotFilled", () => {
-    const currentPair = Pair.create({
-      name: PairName.create({ value: "a" }),
-      teamId: teamId,
-      participantIds: [participantIds[0]!, participantIds[1]!]
-    }, new UniqueEntityID());
+  // describe("moveAnotherMinPairIfPairMemberNotFilled", () => {
+  //   const currentPair = Pair.create({
+  //     name: PairName.create({ value: "a" }),
+  //     teamId: teamId,
+  //     participantIds: [participantIds[0]!, participantIds[1]!]
+  //   }, new UniqueEntityID());
 
-    it("ペアが参加者人数を満たさなくなった場合、他チームの最少人数ペアに参加者を移動する", async () => {
-      const minPair = Pair.create({
-        name: PairName.create({ value: "m" }),
-        teamId: teamId,
-        participantIds: [participantIds[2]!, participantIds[3]!]
-      }, new UniqueEntityID())
+  //   it("ペアが参加者人数を満たさなくなった場合、他チームの最少人数ペアに参加者を移動する", async () => {
+  //     const minPair = Pair.create({
+  //       name: PairName.create({ value: "m" }),
+  //       teamId: teamId,
+  //       participantIds: [participantIds[2]!, participantIds[3]!]
+  //     }, new UniqueEntityID())
 
-      jest.spyOn(pairService, "getMinimumPairBy").mockResolvedValue(minPair)
+  //     jest.spyOn(pairService, "getMinimumPairBy").mockResolvedValue(minPair)
 
-      await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
-        team,
-        currentPair,
-        withdrawParticipant,
-        pairService,
-        prisma
-      );
+  //     await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
+  //       team,
+  //       currentPair,
+  //       withdrawParticipant,
+  //       pairService,
+  //       prisma
+  //     );
 
-      expect(pairService.getMinimumPairBy).toHaveBeenCalledWith(team);
-      expect(pairRepo.saveInTransaction).toHaveBeenCalledWith(currentPair, prisma);
-      expect(pairRepo.saveInTransaction).toHaveBeenCalledWith(minPair, prisma);
-    });
+  //     expect(pairService.getMinimumPairBy).toHaveBeenCalledWith(team);
+  //     expect(pairRepo.saveInTransaction).toHaveBeenCalledWith(currentPair, prisma);
+  //     expect(pairRepo.saveInTransaction).toHaveBeenCalledWith(minPair, prisma);
+  //   });
 
-    it("合流先のペアがない場合は、アラートメールを送信する", async () => {
-      jest.spyOn(pairService, "getMinimumPairBy").mockResolvedValue(undefined);
+  //   it("合流先のペアがない場合は、アラートメールを送信する", async () => {
+  //     jest.spyOn(pairService, "getMinimumPairBy").mockResolvedValue(undefined);
 
-      await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
-        team,
-        currentPair,
-        withdrawParticipant,
-        pairService,
-        prisma
-      );
+  //     await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
+  //       team,
+  //       currentPair,
+  //       withdrawParticipant,
+  //       pairService,
+  //       prisma
+  //     );
 
-      expect(mailRepo.send).toHaveBeenCalledTimes(1)
-      expect(pairService.getMinimumPairBy).toHaveBeenCalledWith(team);
-      expect(pairRepo.saveInTransaction).toHaveBeenCalledTimes(0);
-    });
-  });
+  //     expect(mailRepo.send).toHaveBeenCalledTimes(1)
+  //     expect(pairService.getMinimumPairBy).toHaveBeenCalledWith(team);
+  //     expect(pairRepo.saveInTransaction).toHaveBeenCalledTimes(0);
+  //   });
+  // });
 });

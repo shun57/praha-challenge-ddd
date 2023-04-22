@@ -13,4 +13,5 @@ export interface IPairRepository {
   getByParticipantIds(participantIds: ParticipantId[]): Promise<Pair[]>
   save(pair: Pair): Promise<Pair>
   saveInTransaction(pair: Pair, prisma: CleanPrismaService): Promise<Pair>
+  deleteInTransaction(pair: Pair, prisma: CleanPrismaService): Promise<void>
 }

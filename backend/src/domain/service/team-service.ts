@@ -1,3 +1,4 @@
+import { CleanPrismaService } from "src/infra/db/prisma.service"
 import { Team } from "../entity/team/team"
 import { ITeamRepository } from "../interface/team/team-repository"
 

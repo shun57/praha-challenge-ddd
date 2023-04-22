@@ -55,25 +55,39 @@ export class ParticipantRepository implements IParticipantRepository {
   }
 
   public async save(participant: Participant): Promise<Participant> {
-    await this.prisma.participant.create({
-      data: {
+    await this.prisma.participant.upsert({
+      where: {
+        id: participant.participantId.id.toString()
+      },
+      create: {
         id: participant.participantId.id.toString(),
         name: participant.name.value,
         email: participant.email.value,
         enrollmentStatus: participant.enrollmentStatus.value
       },
+      update: {
+        email: participant.email.value,
+        enrollmentStatus: participant.enrollmentStatus.value
+      }
     })
     return participant
   }
 
   public async saveInTransaction(participant: Participant, prisma: CleanPrismaService): Promise<Participant> {
-    await prisma.participant.create({
-      data: {
+    await prisma.participant.upsert({
+      where: {
+        id: participant.participantId.id.toString()
+      },
+      create: {
         id: participant.participantId.id.toString(),
         name: participant.name.value,
         email: participant.email.value,
         enrollmentStatus: participant.enrollmentStatus.value
       },
+      update: {
+        email: participant.email.value,
+        enrollmentStatus: participant.enrollmentStatus.value
+      }
     })
     return participant
   }
