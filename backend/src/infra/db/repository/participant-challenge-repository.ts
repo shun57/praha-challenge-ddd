@@ -13,8 +13,10 @@ export class ParticipantChallengeRepository implements IParticipantChallengeRepo
   public async getByParticipantIdAndChallengeId(participantId: ParticipantId, challengeId: ChallengeId): Promise<ParticipantChallenge | null> {
     const participantChallenge = await this.prisma.participantChallenge.findUnique({
       where: {
-        participantId: participantId.id.toString(),
-        challengeId: challengeId.id.toString()
+        participantId_challengeId: {
+          participantId: participantId.id.toString(),
+          challengeId: challengeId.id.toString()
+        }
       },
     })
     if (!participantChallenge) {

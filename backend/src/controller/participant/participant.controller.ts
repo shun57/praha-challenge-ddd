@@ -24,10 +24,16 @@ export class ParticipantController {
   async searchParticipants(
     @Query() searchParticipantsDto: SearchParticipantsRequest,
   ): Promise<SearchParticipantsResponse> {
+    let challengeIds: string[] | undefined
+    if (typeof searchParticipantsDto.challengeIds === 'string') {
+      challengeIds = [searchParticipantsDto.challengeIds];
+    } else {
+      challengeIds = searchParticipantsDto.challengeIds
+    }
     const participants = await this.searchParticipantsUseCase.do({
-      challengeIds: searchParticipantsDto.challengeIds,
+      challengeIds: challengeIds,
       progress: searchParticipantsDto.progress,
-      pageNumber: searchParticipantsDto.pageNumber
+      pageIndex: searchParticipantsDto.pageIndex
     })
     return new SearchParticipantsResponse({ participants: participants })
   }

@@ -24,8 +24,8 @@ model Challenge {
 }
 
 model ParticipantChallenge {
-  participantId          String                  @unique
-  challengeId            String                  @unique
+  participantId          String                  
+  challengeId            String                  
   progress               String                  @db.VarChar(255)
   participant            Participant             @relation(fields: [participantId], references: [id])
   challenge              Challenge               @relation(fields: [challengeId], references: [id])

@@ -11,18 +11,20 @@ export class SearchParticipantsUseCase {
     private readonly participantQS: IParticipantQS
   ) { }
 
-  public async do(params: { challengeIds: string[], progress: string, pageNumber: number }) {
-    const { challengeIds, progress, pageNumber } = params
+  public async do(params: { challengeIds: string[] | undefined, progress: string | undefined, pageIndex: number }) {
+    const { challengeIds, progress, pageIndex } = params
 
     const limit = 10
-    const offset = limit * (pageNumber - 1)
+    const offset = limit * pageIndex
 
     try {
-      const challengeIdsEntity = challengeIds.map((challengeId) => {
-        return ChallengeId.create(new UniqueEntityID(challengeId))
-      })
-      const progressEntity = ParticipantChallengeProgress.create({ value: progress })
-      return await this.participantQS.findByChallengesAndProgress(challengeIdsEntity, progressEntity, limit, offset)
+      let challengeIdsEntity: ChallengeId[] = []
+      if (challengeIds && challengeIds.length > 0) {
+        challengeIdsEntity = challengeIds.map((challengeId) => {
+          return ChallengeId.create(new UniqueEntityID(challengeId))
+        })
+      }
+      return await this.participantQS.findByChallengesAndProgress(challengeIdsEntity, progress, limit, offset)
     } catch (error) {
       throw error
     }

@@ -2,6 +2,7 @@ import { ParticipantDTO } from 'src/app/participant/dto/participant'
 
 export class SearchParticipantsResponse {
   participants: Participant[]
+  totalCount: number
 
   public constructor(params: { participants: Page<ParticipantDTO> }) {
     const { participants } = params
@@ -13,6 +14,7 @@ export class SearchParticipantsResponse {
         enrollmentStatus,
       })
     })
+    this.totalCount = participants.paging.totalCount
   }
 }
 

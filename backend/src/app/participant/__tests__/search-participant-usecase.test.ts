@@ -8,7 +8,7 @@ describe('do', () => {
   let useCase: SearchParticipantsUseCase;
   let participantQS: IParticipantQS;
   // テストデータ
-  const params = { challengeIds: ["1", "2"], progress: "未着手", pageNumber: 1 }
+  const params = { challengeIds: ["1", "2"], progress: "未着手", pageIndex: 0 }
   const paging = <Paging>{ totalCount: 5, limit: 10, offset: 0 }
   const participantDtos = [new ParticipantDTO({
     id: "1",
