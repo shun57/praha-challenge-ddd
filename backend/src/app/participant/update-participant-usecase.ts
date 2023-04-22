@@ -33,7 +33,6 @@ export class UpdateParticipantUseCase {
       }
 
       const pairService = new PairService(this.pairRepo)
-
       // 参加者が増減する場合、復帰・脱退処理を行う
       if (participant.isComeback(newEnrollmentStatus)) {
         // 復帰処理
@@ -60,7 +59,7 @@ export class UpdateParticipantUseCase {
           participant.updateEnrollmentStatus(newEnrollmentStatus)
           await this.participantRepo.saveInTransaction(participant, prisma)
         })
-
+        return
       } else if (participant.isSecession(newEnrollmentStatus)) {
         // 脱退処理
         const currentPair = await this.pairRepo.getByParticipantId(participant.participantId)
@@ -76,17 +75,14 @@ export class UpdateParticipantUseCase {
         currentPair.remove(participant.participantId)
         currentPairTeam.removeParticipant(participant.participantId)
         // チームの参加者を取得
-        const secessionMemberSpecification = new SecessionMemberSpecification(this.pairRepo, this.participantRepo, this.mailRepo)
-        // 現所属チーム以外の一番人数の少ないペアを取得
-        const minPair = await pairService.getMinimumPairBy(currentPairTeam, currentPair)
-        if (!minPair) {
-          throw new Error("最少人数のペアがありませんでした。")
-        }
+        const secessionMemberSpecification = new SecessionMemberSpecification(this.pairRepo, this.mailRepo)
         // チームの参加者数が条件を満たさなくなった場合、アラートメールを送る
         if (currentPairTeam.isMinParticipants()) {
           const teamMembers = await this.participantRepo.getByIds(currentPairTeam.participantIds)
           secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(participant, currentPairTeam, teamMembers)
         }
+        // 現所属チーム以外の一番人数の少ないペアを取得
+        const minPair = await pairService.getMinimumPairBy(currentPairTeam, currentPair)
         await this.prisma.$transaction(async (prisma) => {
           // ペアから抜く
           await this.pairRepo.saveInTransaction(currentPair, prisma)
@@ -97,9 +93,12 @@ export class UpdateParticipantUseCase {
           // 参加者の在籍ステータスを更新して保存
           participant.updateEnrollmentStatus(newEnrollmentStatus)
           await this.participantRepo.saveInTransaction(participant, prisma)
+          return
         })
-
       }
+      // 参加者の在籍ステータスを更新して保存
+      participant.updateEnrollmentStatus(newEnrollmentStatus)
+      await this.participantRepo.save(participant)
     } catch (error) {
       throw error
     }

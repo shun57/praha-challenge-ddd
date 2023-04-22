@@ -43,6 +43,8 @@ describe('do', () => {
           provide: ConstantTokens.PARTICIPANT_REPOSITORY,
           useValue: {
             getById: jest.fn(),
+            getByIds: jest.fn(),
+            save: jest.fn(),
             saveInTransaction: jest.fn(),
           },
         },
@@ -221,20 +223,19 @@ describe('do', () => {
     const minPair = Pair.create({
       name: PairName.create({ value: "a" }),
       teamId: TeamId.create(new UniqueEntityID()),
-      participantIds: [ParticipantId.create(new UniqueEntityID("1")), ParticipantId.create(new UniqueEntityID())],
+      participantIds: [ParticipantId.create(new UniqueEntityID("1")), ParticipantId.create(new UniqueEntityID("2"))],
     });
     const minTeam = Team.create({
       name: TeamName.create({ value: "123" }),
-      pairIds: [PairId.create(new UniqueEntityID())],
-      participantIds: [ParticipantId.create(new UniqueEntityID("1")), ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID())]
+      pairIds: [PairId.create(new UniqueEntityID()), PairId.create(new UniqueEntityID()),],
+      participantIds: [ParticipantId.create(new UniqueEntityID("1")), ParticipantId.create(new UniqueEntityID("2")), ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID())]
     });
-    minTeam.participantIds.splice(0, 1)
 
     jest.spyOn(participantRepo, 'getById').mockResolvedValueOnce(enrolledParticipant);
     jest.spyOn(pairRepo, 'getByParticipantId').mockResolvedValueOnce(minPair);
-    jest.spyOn(pairRepo, 'saveInTransaction').mockResolvedValueOnce(minPair);
     jest.spyOn(teamRepo, 'getById').mockResolvedValueOnce(minTeam);
-    jest.spyOn(SecessionMemberSpecification.prototype, 'sendAlertMailToAdminerIfTeamMemberNotFilled').mockResolvedValue();
+    jest.spyOn(PairService.prototype, 'getMinimumPairBy').mockResolvedValue(minPair);
+    jest.spyOn(pairRepo, 'saveInTransaction').mockResolvedValueOnce(minPair);
     jest.spyOn(SecessionMemberSpecification.prototype, 'moveAnotherMinPairIfPairMemberNotFilled').mockResolvedValue();
     jest.spyOn(participantRepo, 'saveInTransaction').mockResolvedValueOnce(enrolledParticipant);
 
@@ -329,10 +330,17 @@ describe('do', () => {
       teamId: TeamId.create(new UniqueEntityID()),
       participantIds: [ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID())],
     });
+    const team = Team.create({
+      name: TeamName.create({ value: "123" }),
+      pairIds: [pair.pairId],
+      participantIds: [ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID()), ParticipantId.create(new UniqueEntityID())]
+    });
     const errorMessage = 'Error occurred while save pair';
 
     jest.spyOn(participantRepo, 'getById').mockResolvedValueOnce(enrolledParticipant);
+    jest.spyOn(teamRepo, 'getById').mockResolvedValueOnce(team);
     jest.spyOn(pairRepo, 'getByParticipantId').mockResolvedValueOnce(pair);
+    jest.spyOn(PairService.prototype, 'getMinimumPairBy').mockResolvedValue(pair);
     jest.spyOn(pairRepo, 'saveInTransaction').mockRejectedValueOnce(new Error(errorMessage));
 
     await expect(useCase.do(resessParams)).rejects.toThrow(errorMessage);
@@ -380,7 +388,7 @@ describe('do', () => {
     await expect(useCase.do(resessParams)).rejects.toThrow(errorMessage);
   });
 
-  it('[異常系]:participantRepo.saveInTransactionで例外が発生した場合、例外が発生する', async () => {
+  it('[異常系]:participantRepo.saveで例外が発生した場合、例外が発生する', async () => {
     const resessedParticipant2 = Participant.create({
       name: ParticipantName.create({ value: "太郎" }),
       email: ParticipantEmail.create({ value: "test@example.com" }),
@@ -389,7 +397,7 @@ describe('do', () => {
     const errorMessage = 'Error occurred while save participant';
 
     jest.spyOn(participantRepo, 'getById').mockResolvedValueOnce(resessedParticipant2);
-    jest.spyOn(participantRepo, 'saveInTransaction').mockRejectedValueOnce(new Error(errorMessage));
+    jest.spyOn(participantRepo, 'save').mockRejectedValueOnce(new Error(errorMessage));
 
     await expect(useCase.do(withdrawParams)).rejects.toThrow(errorMessage);
   });

@@ -97,6 +97,13 @@ describe("PairService", () => {
       expect(mockPairRepo.getByTeamId).toHaveBeenCalledTimes(1);
     });
 
+    test("ペアを渡された場合は除外する", async () => {
+      mockPairRepo.getByTeamId.mockResolvedValueOnce([pairA, pairB]);
+      const result = await pairService.getMinimumPairBy(team, pairA);
+      expect(result).toBe(pairB);
+      expect(mockPairRepo.getByTeamId).toHaveBeenCalledTimes(1);
+    });
+
     test("最少人数のペアがない場合、undefined", async () => {
       mockPairRepo.getByTeamId.mockResolvedValueOnce([]);
       const result = await pairService.getMinimumPairBy(team);

@@ -1,6 +1,5 @@
 import { IMailRepository } from "src/domain/interface/mail/mail-repository";
 import { IPairRepository } from "src/domain/interface/pair/pair-repository";
-import { IParticipantRepository } from "src/domain/interface/participant/participant-repository";
 import { PairService } from "src/domain/service/pair-service";
 import { CleanPrismaService } from "src/infra/db/prisma.service";
 import { SecessionMemberSpecification } from "../secession-member-specification";
@@ -16,14 +15,12 @@ import { ParticipantName } from "src/domain/value-object/participant/participant
 import { ParticipantEmail } from "src/domain/value-object/participant/participant-email";
 import { EnrollmentStatusType, ParticipantEnrollmentStatus } from "src/domain/value-object/participant/participant-enrollment-status";
 
-jest.mock("src/domain/interface/participant/participant-repository");
 jest.mock("src/domain/interface/pair/pair-repository");
 jest.mock("src/domain/interface/mail/mail-repository");
 jest.mock("src/domain/service/pair-service");
 
 describe("SecessionMemberSpecification", () => {
   let pairRepo: jest.Mocked<IPairRepository>;
-  let participantRepo: jest.Mocked<IParticipantRepository>;
   let mailRepo: jest.Mocked<IMailRepository>;
   let pairService: PairService;
   let prisma: CleanPrismaService;
@@ -41,13 +38,6 @@ describe("SecessionMemberSpecification", () => {
       getByIds: jest.fn(),
       deleteInTransaction: jest.fn()
     };
-    participantRepo = {
-      getByEmail: jest.fn(),
-      getById: jest.fn(),
-      save: jest.fn(),
-      saveInTransaction: jest.fn(),
-      getByIds: jest.fn(),
-    };
     mailRepo = {
       send: jest.fn(),
     };
@@ -55,7 +45,6 @@ describe("SecessionMemberSpecification", () => {
     prisma = {} as CleanPrismaService;
     secessionMemberSpecification = new SecessionMemberSpecification(
       pairRepo,
-      participantRepo,
       mailRepo
     );
   });
@@ -106,63 +95,53 @@ describe("SecessionMemberSpecification", () => {
     enrollmentStatus: ParticipantEnrollmentStatus.create({ value: EnrollmentStatusType.enrolled })
   }, new UniqueEntityID());
 
-  // describe("sendAlertMailToAdminerIfTeamMemberNotFilled", () => {
-  //   it("should send an alert email if the team member is not filled", async () => {
-  //     participantRepo.getByIds.mockResolvedValue([participant1, participant2]);
+  describe("sendAlertMailToAdminerIfTeamMemberNotFilled", () => {
+    it("チームの参加者数が満たさなくなった場合にアラートメールを送る", async () => {
+      await secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(
+        withdrawParticipant,
+        team,
+        [participant1, participant2]
+      );
+      expect(mailRepo.send).toHaveBeenCalledTimes(1);
+    });
+  });
 
-  //     await secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(
-  //       withdrawParticipant,
-  //       team
-  //     );
+  describe("moveAnotherMinPairIfPairMemberNotFilled", () => {
+    const currentPair = Pair.create({
+      name: PairName.create({ value: "a" }),
+      teamId: teamId,
+      participantIds: [participantIds[0]!, participantIds[1]!]
+    }, new UniqueEntityID());
 
-  //     expect(participantRepo.getByIds).toHaveBeenCalledWith(team.participantIds);
-  //     expect(mailRepo.send).toHaveBeenCalledTimes(1);
-  //   });
-  // });
+    it("ペアが参加者人数を満たさなくなった場合、他チームの最少人数ペアに参加者を移動する", async () => {
+      const minPair = Pair.create({
+        name: PairName.create({ value: "m" }),
+        teamId: teamId,
+        participantIds: [participantIds[2]!, participantIds[3]!]
+      }, new UniqueEntityID())
 
-  // describe("moveAnotherMinPairIfPairMemberNotFilled", () => {
-  //   const currentPair = Pair.create({
-  //     name: PairName.create({ value: "a" }),
-  //     teamId: teamId,
-  //     participantIds: [participantIds[0]!, participantIds[1]!]
-  //   }, new UniqueEntityID());
+      await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
+        minPair,
+        currentPair,
+        withdrawParticipant,
+        prisma
+      );
 
-  //   it("ペアが参加者人数を満たさなくなった場合、他チームの最少人数ペアに参加者を移動する", async () => {
-  //     const minPair = Pair.create({
-  //       name: PairName.create({ value: "m" }),
-  //       teamId: teamId,
-  //       participantIds: [participantIds[2]!, participantIds[3]!]
-  //     }, new UniqueEntityID())
+      expect(pairRepo.deleteInTransaction).toHaveBeenCalledWith(currentPair, prisma);
+      expect(pairRepo.saveInTransaction).toHaveBeenCalledWith(minPair, prisma);
+    });
 
-  //     jest.spyOn(pairService, "getMinimumPairBy").mockResolvedValue(minPair)
+    it("合流先のペアがない場合は、アラートメールを送信する", async () => {
+      await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
+        undefined,
+        currentPair,
+        withdrawParticipant,
+        prisma
+      );
 
-  //     await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
-  //       team,
-  //       currentPair,
-  //       withdrawParticipant,
-  //       pairService,
-  //       prisma
-  //     );
-
-  //     expect(pairService.getMinimumPairBy).toHaveBeenCalledWith(team);
-  //     expect(pairRepo.saveInTransaction).toHaveBeenCalledWith(currentPair, prisma);
-  //     expect(pairRepo.saveInTransaction).toHaveBeenCalledWith(minPair, prisma);
-  //   });
-
-  //   it("合流先のペアがない場合は、アラートメールを送信する", async () => {
-  //     jest.spyOn(pairService, "getMinimumPairBy").mockResolvedValue(undefined);
-
-  //     await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(
-  //       team,
-  //       currentPair,
-  //       withdrawParticipant,
-  //       pairService,
-  //       prisma
-  //     );
-
-  //     expect(mailRepo.send).toHaveBeenCalledTimes(1)
-  //     expect(pairService.getMinimumPairBy).toHaveBeenCalledWith(team);
-  //     expect(pairRepo.saveInTransaction).toHaveBeenCalledTimes(0);
-  //   });
-  // });
+      expect(mailRepo.send).toHaveBeenCalledTimes(1)
+      expect(pairRepo.deleteInTransaction).toHaveBeenCalledTimes(0);
+      expect(pairRepo.saveInTransaction).toHaveBeenCalledTimes(0);
+    });
+  });
 });
