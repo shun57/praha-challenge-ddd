@@ -55,7 +55,7 @@ export class Pair extends Entity<PairProps> {
     return this.numberOfParticipants() === PAIR_UPPER_LIMIT
   }
 
-  public isMinParticipants(): boolean {
+  public isBelowMinParticipants(): boolean {
     return this.numberOfParticipants() < PAIR_LOWER_LIMIT
   }
 

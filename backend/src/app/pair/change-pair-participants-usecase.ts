@@ -35,9 +35,11 @@ export class ChangePairParticipantsUseCase {
         throw new Error("同じチームの参加者でなければペアにできません。")
       }
       // 新しいペアを作成
-      const newParticipantPair = Pair.create(
-        { name: pair.name, teamId: pair.teamId, participantIds: participantIds }
-        , pair.pairId.id)
+      const newParticipantPair = Pair.create({
+        name: pair.name,
+        teamId: pair.teamId,
+        participantIds: participantIds
+      }, pair.pairId.id)
       await this.pairRepo.save(newParticipantPair)
     } catch (error) {
       throw error

@@ -25,17 +25,15 @@ export class SecessionMemberSpecification {
     await this.mailRepo.send(email)
   }
 
-  public async moveAnotherMinPairIfPairMemberNotFilled(minPair: Pair | undefined, currentPair: Pair, participant: Participant, prisma: CleanPrismaService): Promise<void> {
-    // ペアの残りメンバーを取得
-    const pairMembers = currentPair.participantIds.filter((participantId) => participantId !== participant.participantId)
+  public async moveAnotherMinPairIfPairMemberNotFilled(minPair: Pair | undefined, currentPair: Pair, secessionedParticipant: Participant, prisma: CleanPrismaService): Promise<void> {
     // 合流先のペアがない場合は通知を送る
     if (!minPair) {
       const notExistJoinPairNotifyMail = new NotExistJoinPairNotifyMail()
-      const email = notExistJoinPairNotifyMail.buildEmail(participant, pairMembers[0]!)
+      const email = notExistJoinPairNotifyMail.buildEmail(secessionedParticipant, currentPair.participantIds[0]!)
       await this.mailRepo.send(email)
     } else {
       // 新しいペアに加える
-      minPair.join(pairMembers[0]!)
+      minPair.join(currentPair.participantIds[0]!)
       // 既存ペアが0人になるので削除する
       await this.pairRepo.deleteInTransaction(currentPair, prisma)
       // 新しいペアを保存する

@@ -46,11 +46,7 @@ export class Team extends Entity<TeamProps> {
     this.props.participantIds = updatedParticipant
   }
 
-  public changePairs(newPairIds: PairId[]) {
-    this.props.pairIds = newPairIds
-  }
-
-  public isMinParticipants(): boolean {
+  public isBelowMinParticipants(): boolean {
     return this.numberOfParticipants() < TEAM_LOWER_LIMIT
   }
 

@@ -14,13 +14,14 @@ export class CreateParticipantUseCase {
   ) { }
 
   public async do(params: { name: string, email: string }) {
-    const participant = Participant.create({
-      name: ParticipantName.create({ value: params.name }),
-      email: ParticipantEmail.create({ value: params.email }),
-      enrollmentStatus: ParticipantEnrollmentStatus.create({ value: EnrollmentStatusType.enrolled })
-    }, new UniqueEntityID())
 
     try {
+      const participant = Participant.create({
+        name: ParticipantName.create({ value: params.name }),
+        email: ParticipantEmail.create({ value: params.email }),
+        enrollmentStatus: ParticipantEnrollmentStatus.create({ value: EnrollmentStatusType.enrolled })
+      }, new UniqueEntityID())
+
       const participantService = new ParticipantService(this.participantRepo)
       if (await participantService.isDuplicateEmailBy(participant)) {
         throw new Error("メールアドレスが重複しています。")

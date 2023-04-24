@@ -94,7 +94,7 @@ describe('ペアエンティティ', (): void => {
         expect(pair.isMaxParticipants()).toBe(true)
     });
 
-    test('ペアの参加者数が最少以下:isMinParticipants()', () => {
+    test('ペアの参加者数が最少以下:isBelowMinParticipants()', () => {
         const pair = Pair.create({
             name: pairName,
             teamId: teamId,
@@ -103,6 +103,6 @@ describe('ペアエンティティ', (): void => {
 
         pair.remove(participantId1)
 
-        expect(pair.isMinParticipants()).toBe(true)
+        expect(pair.isBelowMinParticipants()).toBe(true)
     });
 });

@@ -23,9 +23,10 @@ export class UpdateParticipantUseCase {
 
   public async do(params: { participantId: string, enrollmentStatus: string }) {
     const { participantId, enrollmentStatus } = params
-    const newEnrollmentStatus = ParticipantEnrollmentStatus.create({ value: enrollmentStatus })
 
     try {
+      const newEnrollmentStatus = ParticipantEnrollmentStatus.create({ value: enrollmentStatus })
+
       // 現在の参加者を取得
       const participant = await this.participantRepo.getById(ParticipantId.create(new UniqueEntityID(participantId)))
       if (!participant) {
@@ -33,6 +34,7 @@ export class UpdateParticipantUseCase {
       }
 
       const pairService = new PairService(this.pairRepo)
+
       // 参加者が増減する場合、復帰・脱退処理を行う
       if (participant.isComeback(newEnrollmentStatus)) {
         // 復帰処理
@@ -69,15 +71,16 @@ export class UpdateParticipantUseCase {
         // 現在のチームを取得
         const currentPairTeam = await this.teamRepo.getById(currentPair.teamId)
         if (!currentPairTeam) {
-          throw new Error("チームがありませんでした。")
+          throw new Error("脱退対象のチームがありませんでした。")
         }
-        // ペアから参加者を減らす
+        // チームとペアから参加者を減らす
         currentPair.remove(participant.participantId)
         currentPairTeam.removeParticipant(participant.participantId)
-        // チームの参加者を取得
+
+        // 脱退関連の処理
         const secessionMemberSpecification = new SecessionMemberSpecification(this.pairRepo, this.mailRepo)
         // チームの参加者数が条件を満たさなくなった場合、アラートメールを送る
-        if (currentPairTeam.isMinParticipants()) {
+        if (currentPairTeam.isBelowMinParticipants()) {
           const teamMembers = await this.participantRepo.getByIds(currentPairTeam.participantIds)
           secessionMemberSpecification.sendAlertMailToAdminerIfTeamMemberNotFilled(participant, currentPairTeam, teamMembers)
         }
@@ -87,7 +90,7 @@ export class UpdateParticipantUseCase {
           // ペアから抜く
           await this.pairRepo.saveInTransaction(currentPair, prisma)
           // 脱退したことでペアの参加者数が条件を満たさない場合、残りのペアメンバーを移動する
-          if (currentPair.isMinParticipants()) {
+          if (currentPair.isBelowMinParticipants()) {
             await secessionMemberSpecification.moveAnotherMinPairIfPairMemberNotFilled(minPair, currentPair, participant, prisma)
           }
           // 参加者の在籍ステータスを更新して保存
