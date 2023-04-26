@@ -2,15 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ParticipantDTO } from 'src/app/participant/dto/participant'
 import { IParticipantQS } from 'src/app/participant/query-service-interface/participant-qs'
 import { ChallengeId } from 'src/domain/value-object/challenge/challenge-id'
-import { ParticipantChallengeProgress } from 'src/domain/value-object/participant/participant-challenge-progress'
 import { PrismaService } from 'src/infra/db/prisma.service'
-
-interface Conditions {
-  challengeId?: {
-    in: string[]
-  },
-  progress?: { equals: string }
-}
 
 @Injectable()
 export class ParticipantQS implements IParticipantQS {
