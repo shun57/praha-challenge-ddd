@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common"
+import { Inject, NotFoundException } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id";
 import { ITeamRepository } from "src/domain/interface/team/team-repository";
@@ -30,7 +30,7 @@ export class UpdateParticipantUseCase {
       // 現在の参加者を取得
       const participant = await this.participantRepo.getById(ParticipantId.create(new UniqueEntityID(participantId)))
       if (!participant) {
-        throw new Error("対象の会員が存在しません。")
+        throw new NotFoundException("対象の会員が存在しません。")
       }
 
       const pairService = new PairService(this.pairRepo)
@@ -42,12 +42,12 @@ export class UpdateParticipantUseCase {
         // 最少人数のチームを取得
         const minTeam = await teamService.getMinimumTeam()
         if (!minTeam) {
-          throw new Error("最少人数のチームがありませんでした。")
+          throw new NotFoundException("最少人数のチームがありませんでした。")
         }
         // 最少人数のペアを取得
         const minPair = await pairService.getMinimumPairBy(minTeam)
         if (!minPair) {
-          throw new Error("最少人数のペアがありませんでした。")
+          throw new NotFoundException("最少人数のペアがありませんでした。")
         }
         await this.prisma.$transaction(async (prisma) => {
           // ペアが最大人数を超えた場合、分解して保存
@@ -66,12 +66,12 @@ export class UpdateParticipantUseCase {
         // 脱退処理
         const currentPair = await this.pairRepo.getByParticipantId(participant.participantId)
         if (!currentPair) {
-          throw new Error("脱退対象のペアがありませんでした。")
+          throw new NotFoundException("脱退対象のペアがありませんでした。")
         }
         // 現在のチームを取得
         const currentPairTeam = await this.teamRepo.getById(currentPair.teamId)
         if (!currentPairTeam) {
-          throw new Error("脱退対象のチームがありませんでした。")
+          throw new NotFoundException("脱退対象のチームがありませんでした。")
         }
         // チームとペアから参加者を減らす
         currentPair.remove(participant.participantId)
