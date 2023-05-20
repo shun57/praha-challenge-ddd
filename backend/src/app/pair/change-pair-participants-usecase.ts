@@ -8,10 +8,12 @@ import { Pair } from "src/domain/entity/pair/pair";
 import { ParticipantIdsMapper } from "src/infra/mapper/participant-ids-mapper";
 import { IParticipantRepository } from "src/domain/interface/participant/participant-repository";
 import { CheckParticipantEnrollmentSpecification } from "src/domain/specification/check-participant-enrollment-specification";
+import { IPairQS } from "./query-service-interface/pair-qs";
 
 export class ChangePairParticipantsUseCase {
   public constructor(
     @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairRepo: IPairRepository,
+    @Inject(ConstantTokens.PAIR_REPOSITORY) private readonly pairQS: IPairQS,
     @Inject(ConstantTokens.PARTICIPANT_REPOSITORY) private readonly participantRepo: IParticipantRepository,
   ) { }
 
@@ -25,12 +27,12 @@ export class ChangePairParticipantsUseCase {
       // 参加者IDを作成
       const participantIds = ParticipantIdsMapper.toEntity(params.newParticipantIds)
       const checkParticipantEnrollmentSpecification = new CheckParticipantEnrollmentSpecification(this.participantRepo)
-      // 参加者は在籍中か？
+      // 参加者は在籍中か？ FIX:ドメインルールを守れない
       if (!await checkParticipantEnrollmentSpecification.isEnrolledIn(participantIds)) {
         throw new BadRequestException("参加者が在籍中ではない場合、ペアにできません。")
       }
-      // 参加者は同じチームか？
-      const pairService = new PairService(this.pairRepo)
+      // 参加者は同じチームか？ FIX:ドメインルールを守れない
+      const pairService = new PairService(this.pairRepo, this.pairQS)
       if (!await pairService.isSameTeamBy(participantIds)) {
         throw new BadRequestException("同じチームの参加者でなければペアにできません。")
       }

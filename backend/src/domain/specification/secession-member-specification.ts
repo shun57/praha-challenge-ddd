@@ -18,13 +18,6 @@ export class SecessionMemberSpecification {
     this.mailRepo = mailRepo
   }
 
-  public async sendAlertMailToAdminerIfTeamMemberNotFilled(withdrawParticipant: Participant, team: Team, teamMembers: Participant[]): Promise<void> {
-    // メール送信
-    const teamMemberNotSatisfiedNotifyMail = new TeamMemberNotSatisfiedNotifyMail()
-    const email = teamMemberNotSatisfiedNotifyMail.buildEmail(team, withdrawParticipant, teamMembers)
-    await this.mailRepo.send(email)
-  }
-
   public async moveAnotherMinPairIfPairMemberNotFilled(minPair: Pair | undefined, currentPair: Pair, secessionedParticipant: Participant, prisma: CleanPrismaService): Promise<void> {
     // 合流先のペアがない場合は通知を送る
     if (!minPair) {

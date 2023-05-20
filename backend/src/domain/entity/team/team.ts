@@ -7,8 +7,8 @@ import { ParticipantId } from 'src/domain/value-object/participant/participant-i
 
 interface TeamProps {
   name: TeamName
-  pairIds: PairId[]
-  participantIds: ParticipantId[]
+  readonly pairIds: PairId[]
+  readonly participantIds: ParticipantId[]
 }
 
 const TEAM_LOWER_LIMIT = 3
@@ -24,11 +24,11 @@ export class Team extends Entity<TeamProps> {
   }
 
   get pairIds(): PairId[] {
-    return this.props.pairIds
+    return [...this.props.pairIds]
   }
 
   get participantIds(): ParticipantId[] {
-    return this.props.participantIds
+    return [...this.props.participantIds]
   }
 
   private constructor(props: TeamProps, id?: UniqueEntityID) {
@@ -39,18 +39,11 @@ export class Team extends Entity<TeamProps> {
     return this.props.participantIds.length
   }
 
-  public removeParticipant(participantId: ParticipantId): void {
-    const updatedParticipant = this.props.participantIds.filter((pid) => {
-      return !pid.equals(participantId)
-    });
-    this.props.participantIds = updatedParticipant
+  public isMinParticipants(): boolean {
+    return this.numberOfParticipants() == TEAM_LOWER_LIMIT
   }
 
-  public isBelowMinParticipants(): boolean {
-    return this.numberOfParticipants() < TEAM_LOWER_LIMIT
-  }
-
-  public static isSatisfiedBy(participantIds: ParticipantId[]) {
+  private static isSatisfiedBy(participantIds: ParticipantId[]) {
     return participantIds.length >= TEAM_LOWER_LIMIT
   }
 

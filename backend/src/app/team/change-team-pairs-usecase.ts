@@ -25,12 +25,7 @@ export class ChangeTeamPairsUseCase {
       const newPairIds = PairIdsMapper.toEntity(params.newPairIds)
       const newPairs = await this.pairRepo.getByIds(newPairIds)
       // ペアのすべての参加者IDを取得
-      let participantIds: ParticipantId[] = []
-      newPairs.map(newPair => {
-        newPair.participantIds.map((participantId) => {
-          participantIds.push(participantId)
-        })
-      })
+      const participantIds: ParticipantId[] = newPairs.flatMap(newPair => newPair.participantIds);
       // ペアを入れ替える
       const newTeam = Team.create({
         name: team.name,
