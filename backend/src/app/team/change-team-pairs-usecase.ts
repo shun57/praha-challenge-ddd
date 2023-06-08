@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common"
+import { Inject, NotFoundException } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
 import { UniqueEntityID } from "src/shared/domain/unique-entity-id"
 import { ITeamRepository } from "src/domain/interface/team/team-repository"
@@ -19,18 +19,13 @@ export class ChangeTeamPairsUseCase {
       // 対象チームを取得
       const team = await this.teamRepo.getById(TeamId.create(new UniqueEntityID(params.teamId)))
       if (!team) {
-        throw new Error("対象のチームが存在しません。")
+        throw new NotFoundException("対象のチームが存在しません。")
       }
       // ペアIDを作成
       const newPairIds = PairIdsMapper.toEntity(params.newPairIds)
       const newPairs = await this.pairRepo.getByIds(newPairIds)
       // ペアのすべての参加者IDを取得
-      let participantIds: ParticipantId[] = []
-      newPairs.map(newPair => {
-        newPair.participantIds.map((participantId) => {
-          participantIds.push(participantId)
-        })
-      })
+      const participantIds: ParticipantId[] = newPairs.flatMap(newPair => newPair.participantIds);
       // ペアを入れ替える
       const newTeam = Team.create({
         name: team.name,

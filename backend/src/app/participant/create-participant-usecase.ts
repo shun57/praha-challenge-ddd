@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common"
+import { BadRequestException, Inject } from "@nestjs/common"
 import { ConstantTokens } from "src/shared/constants"
 import { IParticipantRepository } from "src/domain/interface/participant/participant-repository";
 import { Participant } from "src/domain/entity/participant/participant";
@@ -24,7 +24,7 @@ export class CreateParticipantUseCase {
 
       const participantService = new ParticipantService(this.participantRepo)
       if (await participantService.isDuplicateEmailBy(participant)) {
-        throw new Error("メールアドレスが重複しています。")
+        throw new BadRequestException("メールアドレスが重複しています。")
       }
       await this.participantRepo.save(participant)
     } catch (error) {

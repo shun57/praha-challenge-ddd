@@ -1,4 +1,4 @@
-import { Inject } from "@nestjs/common"
+import { Inject, NotFoundException } from "@nestjs/common"
 import { ParticipantChallenge } from 'src/domain/entity/participant/participant-challenge';
 import { IParticipantChallengeRepository } from "src/domain/interface/participant/participant-challenge-repository";
 import { ConstantTokens } from "src/shared/constants"
@@ -21,7 +21,7 @@ export class UpdateParticipantChallengeProgressUseCase {
         ChallengeId.create(new UniqueEntityID(challengeId))
       )
       if (!participantChallengeEntity) {
-        throw new Error("対象課題が見つかりません")
+        throw new NotFoundException("対象課題が見つかりません")
       }
       participantChallengeEntity.updateProgress(ParticipantChallengeProgress.create({ value: progress }))
       await this.participantChallengeRepo.save(participantChallengeEntity)
