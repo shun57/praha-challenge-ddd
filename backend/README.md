@@ -20,6 +20,9 @@
 2. `yarn migrate:dev`（本番環境の場合は`yarn migrate:prd`）
 3. これでmigrations配下に各マイグレーションの履歴が生成される
 
+#### スキーマ更新
+`yarn prisma generate`
+
 #### ロールバックについて
 現時点のprismaにはマイグレーションのロールバック機能が存在しない。
 そのため、`schema.prisma`を編集して、再度マイグレーションを実施する必要がある
