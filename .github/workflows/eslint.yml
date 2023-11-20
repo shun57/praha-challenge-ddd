@@ -1,0 +1,25 @@
+name: ESLint
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  eslint:
+    name: Run eslint scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install ESLint
+        run: |
+          npm install eslint@8.10.0
+          npm install @typescript-eslint/eslint-plugin@6.0.0
+          npm install @typescript-eslint/parser@6.0.0
+          npm install eslint-config-airbnb-base
+          npm install eslint-config-airbnb-typescript
+
+      - name: Run ESLint
+        working-directory: backend
+        run: npm run lint
