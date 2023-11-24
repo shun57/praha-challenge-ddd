@@ -1,0 +1,44 @@
+name: Jest
+on: pull_request
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  jest:
+    runs-on: ubuntu-latest
+    container: node:18.12.0
+
+    services:
+      db:
+        image: postgres:12
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: prisma2020
+          POSTGRES_DB: prisma
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.0
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run test
+        run: npm run test:integration
+        env:
+          DATABASE_URL: 'postgresql://root:prisma2020@localhost:5432/prisma?schema=public'
+          STAGE: 'test'
