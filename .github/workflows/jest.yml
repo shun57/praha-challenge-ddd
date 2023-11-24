@@ -11,7 +11,7 @@ jobs:
     container: node:18.12.0
 
     services:
-      db:
+      postgres:
         image: postgres:12
         env:
           POSTGRES_USER: root
@@ -40,5 +40,5 @@ jobs:
       - name: Run test
         run: npm run test:integration
         env:
-          DATABASE_URL: 'postgresql://root:prisma2020@localhost:5432/prisma?schema=public'
+          DATABASE_URL: 'postgresql://root:prisma2020@postgres:5432/prisma?schema=public'
           STAGE: 'test'
