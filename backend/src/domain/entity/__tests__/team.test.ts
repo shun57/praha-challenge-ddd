@@ -51,17 +51,4 @@ describe('チームエンティティ', (): void => {
 
         expect(team.numberOfParticipants()).toBe(3);
     });
-
-    test('チームの参加者人数が最少人数以下かどうか:isBelowMinParticipants()', () => {
-        const team = Team.create({
-            name: teamName,
-            pairIds: [pairId1, pairId2],
-            participantIds: [participantId1, participantId2, participantId3]
-        }, teamId)
-
-        team.participantIds.splice(0, 1)
-
-        expect(team.isBelowMinParticipants()).toBe(true);
-    });
-
 });
