@@ -1,32 +1,46 @@
 version: '3.7'
 services:
+  nest:
+    container_name: nest
+    build:
+      context: ../
+      dockerfile: .docker/app/Dockerfile
+    volumes:
+      - ../backend:/home/node/app
+      - ../backend/node_modules:/home/node/app/node_modules
+    tty: true
+    ports:
+      - '3001:3001'
+    depends_on:
+      - prisma-db
+
   prisma-db:
     container_name: prisma-db
     image: postgres:12
     ports:
-      - "5403:5432"
+      - '5403:5432'
     volumes:
       - prisma-store:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: prisma2020
       POSTGRES_DB: prisma
-      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
-      TZ: "Asia/Tokyo"
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8'
+      TZ: 'Asia/Tokyo'
 
   prisma-test-db:
     container_name: prisma-test-db
     image: postgres:12
     ports:
-      - "5402:5432"
+      - '5402:5432'
     volumes:
       - prisma-test-store:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: prisma2020
       POSTGRES_DB: prisma
-      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
-      TZ: "Asia/Tokyo"
+      POSTGRES_INITDB_ARGS: '--encoding=UTF-8'
+      TZ: 'Asia/Tokyo'
 
   adminer:
     container_name: postgres-adminer
@@ -35,13 +49,13 @@ services:
       ADMINER_DEFAULT_SERVER: prisma-db
       ADMINER_DESIGN: ng9
     ports:
-      - "8080:8080"
+      - '8080:8080'
 
   mailhog:
     image: mailhog/mailhog
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - '1025:1025'
+      - '8025:8025'
 
 volumes:
   prisma-store:

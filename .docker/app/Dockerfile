@@ -2,10 +2,8 @@ FROM node:18.12.0-slim
 
 WORKDIR /home/node/app
 
-COPY ./backend .
+COPY ../../backend/package*.json ./
 
-RUN npm install
+RUN npm ci
 
-EXPOSE 3001
-
-CMD ["npm", "run","dev"]
+CMD ["npm","run","dev"]
