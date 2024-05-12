@@ -18,7 +18,6 @@ import { ParticipantChallengeRepository } from 'src/infra/db/repository/particip
 import { ParticipantRepository } from 'src/infra/db/repository/participant-repository'
 import { PairRepository } from './infra/db/repository/pair-repository'
 import { TeamRepository } from './infra/db/repository/team-repository'
-import { PairMemberRepository } from './infra/db/repository/pair-member-repository'
 import { MailRepository } from './infra/db/repository/mail-repository'
 
 @Module({
@@ -57,10 +56,6 @@ import { MailRepository } from './infra/db/repository/mail-repository'
     {
       provide: ConstantTokens.PARTICIPANT_CHALLENGE_REPOSITORY,
       useClass: ParticipantChallengeRepository
-    },
-    {
-      provide: ConstantTokens.PAIR_MEMBER_REPOSITORY,
-      useClass: PairMemberRepository
     },
     {
       provide: ConstantTokens.TEAM_REPOSITORY,
