@@ -19,6 +19,7 @@ import { ParticipantRepository } from 'src/infra/db/repository/participant-repos
 import { PairRepository } from './infra/db/repository/pair-repository'
 import { TeamRepository } from './infra/db/repository/team-repository'
 import { MailRepository } from './infra/db/repository/mail-repository'
+import { FirebaseAuthService } from './infra/firebase/firebase-auth.service'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { MailRepository } from './infra/db/repository/mail-repository'
   controllers: [ParticipantController, TeamController, PairController],
   providers: [
     PrismaService,
+    FirebaseAuthService,
     ChangePairParticipantsUseCase,
     GetAllPairsUseCase,
     CreateParticipantUseCase,
